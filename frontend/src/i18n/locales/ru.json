@@ -1,0 +1,16 @@
+{
+  "welcome": "Блог на Symfony + Vue",
+  "buttons": {
+    "checkStatus": "Проверить связь с API",
+    "awaitingResults": "Загрузка..."
+  },
+  "toggles": {
+    "changeLanguage": "Сменить язык"
+  },
+  "healthCheckResponse": {
+    "header": "Ответ от бэкенда",
+    "status": "Статус",
+    "message": "Сообщение",
+    "phpVersion": "Версия PHP"
+  }
+  }

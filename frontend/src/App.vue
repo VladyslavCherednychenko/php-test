@@ -1,14 +1,23 @@
 <script setup lang="ts">
 import { RouterLink, RouterView } from 'vue-router'
 import HelloWorld from './components/HelloWorld.vue'
-import { ref } from 'vue'
+import { ref, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
 
 const { t, locale } = useI18n()
 
+const locales = ['en', 'ru', 'de']
+
 const toggleLanguage = () => {
-  locale.value = locale.value === 'en' ? 'ru' : 'en'
+  const currentIndex = locales.indexOf(locale.value)
+  const nextIndex = (currentIndex + 1) % locales.length
+  locale.value = locales[nextIndex]
 }
+
+watch(locale, (newLang) => {
+  localStorage.setItem('user-locale', newLang)
+  document.querySelector('html')?.setAttribute('lang', newLang)
+})
 
 interface HealthResponse {
   status: string;
@@ -38,12 +47,7 @@ async function fetchData(): Promise<void> {
     const data: HealthResponse = await response.json()
     backendData.value = data
   } catch (err) {
-    if (err instanceof Error) {
-      error.value = err.message
-    } else {
-      error.value = "An unknown error occurred"
-    }
-    console.error("Error during request:", err)
+    error.value = err instanceof Error ? err.message : "An unknown error occurred"
   } finally {
     isLoading.value = false
   }
@@ -68,7 +72,7 @@ async function fetchData(): Promise<void> {
 
   <div style="padding: 20px; font-family: sans-serif;">
     <h1>{{ t('welcome') }}</h1>
-    <button @click="toggleLanguage">{{t('toggles.changeLanguage')}} ({{ locale }})</button>
+    <button @click="toggleLanguage">{{ t('toggles.changeLanguage') }} ({{ locale }})</button>
     <button @click="fetchData" :disabled="isLoading">
       {{ isLoading ? t('buttons.awaitingResults') : t('buttons.checkStatus') }}
     </button>

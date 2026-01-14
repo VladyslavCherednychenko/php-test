@@ -1,0 +1,16 @@
+{
+  "welcome": "Symfony + Vue Blog",
+  "buttons": {
+    "checkStatus": "Check connection with API",
+    "awaitingResults": "Loading..."
+  },
+  "toggles": {
+    "changeLanguage": "Change language"
+  },
+  "healthCheckResponse": {
+    "header": "Backend response",
+    "status": "Status",
+    "message": "Message",
+    "phpVersion": "PHP version"
+  }
+}

@@ -1,50 +1,19 @@
 import { createI18n } from 'vue-i18n'
+import en from './locales/en.json'
+import ru from './locales/ru.json'
+import de from './locales/de.json'
 
-type MessageSchema = {
-  welcome: string
-  buttons: {
-    checkStatus: string
-  }
-}
-
-const messages = {
-  en: {
-    welcome: 'Symfony + Vue Blog',
-    buttons: {
-      checkStatus: 'Check connection with API',
-      awaitingResults: 'Loading...'
-    },
-    toggles: {
-      changeLanguage: 'Change language'
-    },
-    healthCheckResponse: {
-      header: 'Backend response',
-      status: 'Status',
-      message: 'Message',
-      phpVersion: 'PHP version'
-    }
-  },
-  ru: {
-    welcome: 'Блог на Symfony + Vue',
-    buttons: {
-      checkStatus: 'Проверить связь с API',
-      awaitingResults: 'Загрузка...'
-    },
-    toggles: {
-      changeLanguage: 'Сменить язык'
-    },
-    healthCheckResponse: {
-      header: 'Ответ от бэкенда',
-      status: 'Статус',
-      message: 'Сообщение',
-      phpVersion: 'Версия PHP'
-    }
-  }
-}
+const savedLocale = localStorage.getItem('user-locale') || 'en'
 
 export const i18n = createI18n({
   legacy: false, // using Composition API
   locale: 'en',
-  fallbackLocale: 'ru',
-  messages
+  fallbackLocale: 'en',
+  messages: { en, ru, de }
 })
+
+export function setLanguage(newLocale: string) {
+  i18n.global.locale.value = newLocale
+  localStorage.setItem('user-locale', newLocale)
+  document.querySelector('html')?.setAttribute('lang', newLocale)
+}
