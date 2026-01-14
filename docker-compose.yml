@@ -1,0 +1,51 @@
+services:
+  db_pg:
+    container_name: db_pg
+    image: postgres:15-alpine
+    environment:
+      POSTGRES_DB: blog_db
+      POSTGRES_USER: user
+      POSTGRES_PASSWORD: password
+    ports:
+      - "5432:5432"
+    volumes:
+      - db_data:/var/lib/postgresql/data
+
+  php: 
+    container_name: php
+    build:
+      context: ./backend
+      dockerfile: ../docker/php/Dockerfile
+    volumes:
+      - ./backend:/var/www/html
+    environment:
+      DATABASE_URL: "postgresql://user:password@db_pg:5432/blog_db?serverVersion=15&charset=utf8"
+    depends_on:
+      - db_pg
+
+  nginx:
+    container_name: nginx
+    image: nginx:stable-alpine
+    ports:
+      - "8080:80"
+    volumes:
+      - ./backend:/var/www/html
+      - ./docker/nginx/default.conf:/etc/nginx/conf.d/default.conf
+    depends_on:
+      - php
+
+  vue:
+    container_name: vue
+    build:
+      context: ./frontend
+      dockerfile: ../docker/frontend/Dockerfile
+    volumes:
+      - ./frontend:/app
+      - /app/node_modules
+    ports:
+      - "5173:5173"
+    depends_on:
+      - php
+
+volumes:
+  db_data:
