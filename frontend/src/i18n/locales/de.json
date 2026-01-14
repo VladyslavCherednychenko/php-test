@@ -1,11 +1,26 @@
 {
+  "languageName": "Deutsch",
   "welcome": "Symfony + Vue Blog",
-  "buttons": {
-    "checkStatus": "Verbindung mit API prüfen",
-    "awaitingResults": "Wird geladen..."
+  "awaitingResults": "Wird geladen...",
+  "links": {
+    "home": "Startseite"
+  },
+  "actions": {
+    "healthCheck": "API-Verbindung prüfen"
   },
   "toggles": {
-    "changeLanguage": "Sprache ändern"
+    "changeLanguage": "Sprache ändern",
+    "changeTheme": "Design ändern"
+  },
+  "themes": {
+    "label": "Design",
+    "light": "Hell",
+    "dark": "Dunkel"
+  },
+  "language": {
+    "label": "Sprache",
+    "name": "Deutsch",
+    "code": "de"
   },
   "healthCheckResponse": {
     "header": "Backend-Antwort",

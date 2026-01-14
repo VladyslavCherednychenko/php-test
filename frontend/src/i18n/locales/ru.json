@@ -1,16 +1,30 @@
 {
   "welcome": "Блог на Symfony + Vue",
-  "buttons": {
-    "checkStatus": "Проверить связь с API",
-    "awaitingResults": "Загрузка..."
+  "awaitingResults": "Загрузка...",
+  "links": {
+    "home": "Главная"
+  },
+  "actions": {
+    "healthCheck": "Проверить связь с API"
   },
   "toggles": {
-    "changeLanguage": "Сменить язык"
+    "changeLanguage": "Сменить язык",
+    "changeTheme": "Сменить тему"
+  },
+  "themes": {
+    "label": "Тема",
+    "light": "Светлая",
+    "dark": "Темная"
+  },
+  "language": {
+    "label": "Язык",
+    "name": "Русский",
+    "code": "ru"
   },
   "healthCheckResponse": {
-    "header": "Ответ от бэкенда",
+    "header": "Ответ бэкенда",
     "status": "Статус",
     "message": "Сообщение",
     "phpVersion": "Версия PHP"
   }
-  }
+}

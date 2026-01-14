@@ -1,11 +1,25 @@
 {
   "welcome": "Symfony + Vue Blog",
-  "buttons": {
-    "checkStatus": "Check connection with API",
-    "awaitingResults": "Loading..."
+  "awaitingResults": "Loading...",
+  "links": {
+    "home": "Home"
+  },
+  "actions": {
+    "healthCheck": "Check connection with API"
   },
   "toggles": {
-    "changeLanguage": "Change language"
+    "changeLanguage": "Change language",
+    "changeTheme": "Change Theme"
+  },
+  "themes": {
+    "label": "Theme",
+    "light": "Light",
+    "dark": "Dark"
+  },
+  "language": {
+    "label": "Language",
+    "name": "English",
+    "code": "en"
   },
   "healthCheckResponse": {
     "header": "Backend response",
