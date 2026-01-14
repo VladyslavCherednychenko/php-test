@@ -1,0 +1,1 @@
+api.health_check.success: "Symfony внутри Docker работает отлично!"
