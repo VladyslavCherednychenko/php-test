@@ -6,8 +6,8 @@ import de from './locales/de.json'
 const savedLocale = localStorage.getItem('user-locale') || 'en'
 
 export const i18n = createI18n({
-  legacy: false, // using Composition API
-  locale: 'en',
+  legacy: false,
+  locale: savedLocale,
   fallbackLocale: 'en',
   messages: { en, ru, de }
 })
