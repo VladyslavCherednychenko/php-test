@@ -28,6 +28,6 @@
     "status": "Статус",
     "message": "Сообщение",
     "phpVersion": "Версия PHP",
-    "dbStatus": "БД доступна"
+    "dbStatus": "Доступность БД"
   }
 }

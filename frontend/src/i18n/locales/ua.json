@@ -1,0 +1,33 @@
+{
+  "logoText": "Блог",
+  "welcome": "Symfony + Vue Блог",
+  "awaitingResults": "Завантаження...",
+  "links": {
+    "home": "Головна"
+  },
+  "actions": {
+    "healthCheck": "Перевірити зв'язок з API"
+  },
+  "toggles": {
+    "changeLanguage": "Змінити мову",
+    "changeTheme": "Змінити тему"
+  },
+  "themes": {
+    "label": "Тема",
+    "light": "Світла",
+    "dark": "Темна",
+    "system": "Системна"
+  },
+  "language": {
+    "label": "Мова",
+    "name": "Українська",
+    "code": "ua"
+  },
+  "healthCheckResponse": {
+    "header": "Відповідь бекенду",
+    "status": "Статус",
+    "message": "Повідомлення",
+    "phpVersion": "Версія PHP",
+    "dbStatus": "Доступність БД"
+  }
+}
