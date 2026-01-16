@@ -22,6 +22,7 @@ services:
       - php_var:/var/www/html/var
     environment:
       DATABASE_URL: "postgresql://user:password@db_pg:5432/blog_db?serverVersion=15&charset=utf8"
+      APP_ENV: dev
     depends_on:
       - db_pg
 
