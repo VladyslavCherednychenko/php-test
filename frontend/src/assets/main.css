@@ -1,35 +1,49 @@
 @import './base.css';
 
 #app {
-  max-width: 1280px;
-  margin: 0 auto;
-  padding: 2rem;
-  font-weight: normal;
+  display: flex;
+  flex-direction: column;
+  min-height: 100dvh;
 }
 
-a,
-.green {
-  text-decoration: none;
-  color: hsla(160, 100%, 37%, 1);
-  transition: 0.4s;
-  padding: 3px;
+.main-content {
+  flex-grow: 1;
+  padding-top: var(--navbar-height);
+
+  display: flow-root;
+}
+
+a {
+  text-decoration: underline;
+  color: var(--color-link-normal);
+  padding: var(--padding-small);
+}
+
+.main-content > h1 {
+  margin-top: var(--margin-small);
+}
+
+h1 {
+  text-align: center;
+}
+
+.icon-svg {
+  width: 20px;
+  height: 20px;
+  color: var(--color-text);
+  flex-shrink: 0;
+}
+
+.icon-svg.small {
+  width: 16px;
+  height: 16px;
+  margin-right: 8px;
 }
 
 @media (hover: hover) {
   a:hover {
-    background-color: hsla(160, 100%, 37%, 0.2);
-  }
-}
-
-@media (min-width: 1024px) {
-  body {
-    display: flex;
-    place-items: center;
-  }
-
-  #app {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    padding: 0 2rem;
+    color: var(--color-link-text-hover);
+    background-color: var(--color-link-background-hover);
+    border-radius: var(--radius-default);
   }
 }

@@ -1,58 +1,122 @@
-/* color palette from <https://github.com/vuejs/theme> */
 :root {
-  --vt-c-white: #ffffff;
-  --vt-c-white-soft: #f8f8f8;
-  --vt-c-white-mute: #f2f2f2;
+  /* [COMMON VARIABLES] */
+  --layout-side-padding-min: 1rem;
+  --layout-side-padding: max(var(--layout-side-padding-min), calc(50vw - 720px + 1rem));
 
-  --vt-c-black: #181818;
-  --vt-c-black-soft: #222222;
-  --vt-c-black-mute: #282828;
+  /* sizes */
+  --utilities-bar-height: 2rem;
 
-  --vt-c-indigo: #2c3e50;
+  --top-banner-height: 3.375rem;
+  --sticky-header-height: calc(var(--navigation-height) + var(--utilities-bar-height));
+  --z-index-sticky-header: 100;
+  --z-index-sidebar-mobile: 90;
 
-  --vt-c-divider-light-1: rgba(60, 60, 60, 0.29);
-  --vt-c-divider-light-2: rgba(60, 60, 60, 0.12);
+  /* colors */
+  --color-white: #fff;
+  --color-white-alpha-25: #ffffff40;
+  --color-white-alpha-75: #ffffffbf;
+  --color-black: #000;
+  --color-black-alpha-25: #00000040;
+  --color-black-alpha-75: #000000bf;
+  --color-gray-90: #f7f7f8;
+  --color-gray-80: #edeef0;
+  --color-gray-60: #c3c7cb;
+  --color-gray-40: #51565d;
+  --color-gray-20: #2d3034;
+  --color-gray-10: #212426;
+  --color-gray-05: #18191b;
+  --color-red-90: #ffe6ea;
+  --color-red-80: #fc7d92;
+  --color-red-50: #d31232;
+  --color-red-20: #b7102c;
+  --color-red-10: #4b0b16;
+  --color-orange-90: #fef3eb;
+  --color-orange-80: #febe8f;
+  --color-orange-50: #e2782c;
+  --color-orange-20: #c2570a;
+  --color-orange-10: #3f220d;
+  --color-yellow-90: #fef0c3;
+  --color-yellow-80: #fae49e;
+  --color-yellow-50: #e6b30a;
+  --color-yellow-20: #97770c;
+  --color-yellow-10: #574405;
+  --color-green-90: #eaf6ef;
+  --color-green-80: #70eba3;
+  --color-green-50: #089141;
+  --color-green-20: #065b29;
+  --color-green-10: #0c311c;
+  --color-blue-90: #ecf4fe;
+  --color-blue-80: #a4cefe;
+  --color-blue-50: #0a5dbd;
+  --color-blue-20: #044c9f;
+  --color-blue-10: #072446;
+  --color-purple-90: #f7f0ff;
+  --color-purple-80: #d8b8ff;
+  --color-purple-50: #863ae4;
+  --color-purple-20: #5f1fad;
+  --color-purple-10: #260e43;
 
-  --vt-c-divider-dark-1: rgba(84, 84, 84, 0.65);
-  --vt-c-divider-dark-2: rgba(84, 84, 84, 0.48);
+  /* fonts */
+  --font-family-text: 'Inter', sans-serif;
+  --font-family-code: 'JetBrains Mono', monospace;
+  --font-line-content: 1.75;
+  --font-line-normal: 1.5;
+  --font-line-ui: 1;
+  --font-size-largest: 2.5rem;
+  --font-size-larger: 2rem;
+  --font-size-large: 1.5rem;
+  --font-size-medium: 1.25rem;
+  --font-size-normal: 1rem;
+  --font-size-small: 0.8rem;
+  --font-weight-normal: 400;
+  --font-weight-bold: 600;
 
-  --vt-c-text-light-1: var(--vt-c-indigo);
-  --vt-c-text-light-2: rgba(60, 60, 60, 0.66);
-
-  --vt-c-text-dark-1: var(--vt-c-white);
-  --vt-c-text-dark-2: rgba(235, 235, 235, 0.64);
+  /* radius */
+  --radius-normal: 0.25rem;
+  --radius-full: 9999px;
 }
 
-/* semantic color variables for this project */
+/* [LIGHT THEME: COLOR VARIABLES] */
 :root {
-  --color-background: var(--vt-c-white);
-  --color-background-soft: var(--vt-c-white-soft);
-  --color-background-mute: var(--vt-c-white-mute);
+  --color-background-page: var(--color-white);
+  --color-background-primary: var(--color-gray-90);
+  --color-background-secondary: var(--color-gray-90);
 
-  --color-border: var(--vt-c-divider-light-2);
-  --color-border-hover: var(--vt-c-divider-light-1);
+  --color-border-primary: var(--color-gray-60);
+  --color-border-secondary: var(--color-gray-40);
+  --color-border-active: var(--color-blue-50);
 
-  --color-heading: var(--vt-c-text-light-1);
-  --color-text: var(--vt-c-text-light-1);
-
-  --color-scrollbar: var(--vt-c-divider-light-1);
-
-  --section-gap: 160px;
+  --color-text-primary: var(--color-black);
+  --color-text-secondary: var(--color-gray-40);
 }
 
+/* [DARK THEME: COLOR VARIABLES] */
 @media (prefers-color-scheme: dark) {
   :root:is(.dark-theme) {
-    --color-background: var(--vt-c-black);
-    --color-background-soft: var(--vt-c-black-soft);
-    --color-background-mute: var(--vt-c-black-mute);
+    --color-background-page: var(--color-gray-05);
+    --color-background-primary: var(--color-gray-10);
+    --color-background-secondary: var(--color-gray-20);
 
-    --color-border: var(--vt-c-divider-dark-2);
-    --color-border-hover: var(--vt-c-divider-dark-1);
+    --color-border-primary: var(--color-gray-40);
+    --color-border-secondary: var(--color-gray-60);
+    --color-border-active: var(--color-blue-80);
 
-    --color-heading: var(--vt-c-text-dark-1);
-    --color-text: var(--vt-c-text-dark-2);
+    --color-text-primary: var(--color-white);
+    --color-text-secondary: var(--color-gray-60);
+  }
+}
 
-    --color-scrollbar: var(--vt-c-divider-dark-1);
+/* [BIG SCREEN: SIZE VARIABLES] */
+@media (width > 1006px) {
+  :root {
+    --navigation-height: 4.125rem;
+  }
+}
+
+/* [SMALL SCREEN: SIZE VARIABLES] */
+@media (width <= 1006px) {
+  :root {
+    --navigation-height: 2.9rem;
   }
 }
 
@@ -65,9 +129,10 @@
 }
 
 body {
-  min-height: 100vh;
-  color: var(--color-text);
-  background: var(--color-background);
+  margin: 0;
+  min-height: 100dvh;
+  color: var(--color-text-primary);
+  background-color: var(--color-background-page);
   transition:
     color 0.5s,
     background-color 0.5s;
@@ -89,4 +154,5 @@ body {
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  overflow-x: hidden;
 }

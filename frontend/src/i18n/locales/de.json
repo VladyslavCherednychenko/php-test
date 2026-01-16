@@ -1,5 +1,5 @@
 {
-  "languageName": "Deutsch",
+  "logoText": "Blog",
   "welcome": "Symfony + Vue Blog",
   "awaitingResults": "Wird geladen...",
   "links": {
@@ -15,7 +15,8 @@
   "themes": {
     "label": "Design",
     "light": "Hell",
-    "dark": "Dunkel"
+    "dark": "Dunkel",
+    "system": "Systemstandard"
   },
   "language": {
     "label": "Sprache",
@@ -26,6 +27,7 @@
     "header": "Backend-Antwort",
     "status": "Status",
     "message": "Nachricht",
-    "phpVersion": "PHP-Version"
+    "phpVersion": "PHP-Version",
+    "dbStatus": "DB verfügbar"
   }
 }
