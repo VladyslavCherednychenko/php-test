@@ -8,9 +8,10 @@ use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Contracts\Translation\TranslatorInterface;
 use Doctrine\ORM\EntityManagerInterface;
 
+#[Route('/api/health', name: '_api_health_')]
 class HealthCheckController extends AbstractController
 {
-    #[Route(path: '/api/health', name: 'app_health', methods: ['GET'])]
+    #[Route('', name: 'check', methods: ['GET'])]
     public function healthCheck(TranslatorInterface $translator, EntityManagerInterface $entityManager): JsonResponse
     {
         $isDbAlive = true;
