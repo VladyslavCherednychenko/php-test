@@ -7,18 +7,18 @@ use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 use Doctrine\ORM\Tools\Pagination\Paginator;
 
-class UserRepository extends ServiceEntityRepository implements IUserRepository
+class UserRepository extends ServiceEntityRepository implements UserRepositoryInterface
 {
     public function __construct(ManagerRegistry $registry)
     {
         parent::__construct($registry, User::class);
     }
 
-    public function getUserList(int $page = 1, int $limit = 10): Paginator
+    public function getUserList(int $page, int $offset): Paginator
     {
         $query = $this->createQueryBuilder('u')
             ->orderBy('u.id', 'ASC')
-            ->setFirstResult(($page - 1) * $limit)
+            ->setFirstResult($offset)
             ->setMaxResults($limit)
             ->getQuery();
 
@@ -30,12 +30,8 @@ class UserRepository extends ServiceEntityRepository implements IUserRepository
         return $this->findOneBy(['id' => $id]);
     }
 
-    public function createUser(string $email, string $hashedPassword): User
+    public function createUser(User $user): User
     {
-        $user = new User();
-        $user->setEmail($email);
-        $user->setPassword($hashedPassword);
-
         $this->getEntityManager()->persist($user);
         $this->getEntityManager()->flush();
 

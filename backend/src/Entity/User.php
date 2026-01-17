@@ -30,6 +30,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     private ?string $email = null;
 
     #[ORM\Column(type: 'string', length: 255)]
+    #[Assert\PasswordStrength]
     private ?string $password = null;
 
     #[ORM\Column(enumType: UserRole::class, options: ['default' => 0])]
