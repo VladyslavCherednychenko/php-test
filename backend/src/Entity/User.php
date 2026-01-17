@@ -6,6 +6,7 @@ use App\Enum\UserRole;
 use App\Repository\UserRepository;
 
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Symfony\Component\Serializer\Attribute\Groups;
 use Symfony\Component\Validator\Constraints as Assert;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
@@ -13,7 +14,7 @@ use Symfony\Component\Security\Core\User\UserInterface;
 
 #[ORM\Entity(repositoryClass: UserRepository::class)]
 #[ORM\Table(name: 'users')]
-#[ORM\Index(columns: ['email'], name: 'IX_AppUser_Email')]
+#[UniqueEntity('email')]
 class User implements UserInterface, PasswordAuthenticatedUserInterface
 {
     #[ORM\Id]
@@ -31,7 +32,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\Column(type: 'string', length: 255)]
     private ?string $password = null;
 
-    #[ORM\Column(type: 'integer', enumType: UserRole::class, options: ['default' => 0])]
+    #[ORM\Column(enumType: UserRole::class, options: ['default' => 0])]
     #[Groups(['user:read'])]
     private UserRole $role = UserRole::USER;
 
@@ -74,12 +75,10 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 
     public function getRoles(): array
     {
-        return match ($this->role) {
-            UserRole::USER => ['ROLE_USER'],
-            UserRole::MODERATOR => ['ROLE_MODERATOR'],
-            UserRole::ADMIN => ['ROLE_ADMIN'],
-            default => ['ROLE_USER']
-        };
+        $roles = ['ROLE_' . strtoupper($this->role->name)];
+        $roles[] = 'ROLE_USER';
+
+        return array_unique($roles);
     }
 
     public function getUserIdentifier(): string
