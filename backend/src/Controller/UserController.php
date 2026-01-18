@@ -9,17 +9,20 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
+use Symfony\Component\Serializer\SerializerInterface;
 
 #[Route('/api/users', name: '_api_users_')]
 class UserController extends AbstractController
 {
     private UserServiceInterface $userService;
     private ValidatorInterface $validator;
+    private SerializerInterface $serializer;
 
-    public function __construct(UserServiceInterface $userService, ValidatorInterface $validator)
+    public function __construct(UserServiceInterface $userService, ValidatorInterface $validator, SerializerInterface $serializer)
     {
         $this->userService = $userService;
         $this->validator = $validator;
+        $this->serializer = $serializer;
     }
 
     #[Route('', name: 'list', methods: ['GET'])]
@@ -58,7 +61,7 @@ class UserController extends AbstractController
 
     #[Route('/register', name: 'register', methods: ['POST'])]
     public function register(Request $request): JsonResponse {
-        $user = $serializer->deserialize($request->getContent(), User::class, 'json');
+        $user = $this->serializer->deserialize($request->getContent(), User::class, 'json');
 
         $errors = $this->validator->validate($user);
         if (count($errors) > 0) {
