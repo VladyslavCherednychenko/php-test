@@ -22,7 +22,7 @@ class UserService implements UserServiceInterface {
         $limit = min(100, $limit);
         $offset = ($page - 1) * $limit;
 
-        return $this->userRepository->getUserList($page, $offset);
+        return $this->userRepository->getUserList($offset, $limit);
     }
 
     public function getUserById(int $id): ?User

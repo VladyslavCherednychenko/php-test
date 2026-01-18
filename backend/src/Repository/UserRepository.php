@@ -14,7 +14,7 @@ class UserRepository extends ServiceEntityRepository implements UserRepositoryIn
         parent::__construct($registry, User::class);
     }
 
-    public function getUserList(int $page, int $offset): Paginator
+    public function getUserList(int $offset, int $limit): Paginator
     {
         $query = $this->createQueryBuilder('u')
             ->orderBy('u.id', 'ASC')
