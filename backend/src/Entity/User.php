@@ -14,7 +14,10 @@ use Symfony\Component\Security\Core\User\UserInterface;
 
 #[ORM\Entity(repositoryClass: UserRepository::class)]
 #[ORM\Table(name: 'users')]
-#[UniqueEntity('email')]
+#[UniqueEntity(
+    fields: ['email'],
+    message: 'registration.email.assert.unique'
+)]
 class User implements UserInterface, PasswordAuthenticatedUserInterface
 {
     #[ORM\Id]
@@ -25,12 +28,13 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 
     #[ORM\Column(type: 'string', length: 255, unique: true)]
     #[Groups(['user:read'])]
-    #[Assert\NotBlank(message: "Email can not be empty")]
-    #[Assert\Email(message: "Email format is invalid")]
+    #[Assert\NotBlank(message: 'registration.email.assert.not_blank')]
+    #[Assert\Email(message: 'registration.email.assert.email')]
     private ?string $email = null;
 
     #[ORM\Column(type: 'string', length: 255)]
-    #[Assert\PasswordStrength]
+    #[Assert\NotBlank(message: 'registration.password.assert.not_blank')]
+    #[Assert\PasswordStrength(message: 'registration.password.assert.password_strength')]
     private ?string $password = null;
 
     #[ORM\Column(enumType: UserRole::class, options: ['default' => 0])]
