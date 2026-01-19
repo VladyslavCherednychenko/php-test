@@ -1,37 +1,47 @@
 <?php
+
 namespace App\EventListener;
 
-use Symfony\Component\HttpFoundation\JsonResponse;
-use Symfony\Component\HttpFoundation\Response;
+use App\Service\ApiResponseFactory;
+use App\Exception\DtoValidationException;
 use Symfony\Component\HttpKernel\Event\ExceptionEvent;
+use Symfony\Contracts\Translation\TranslatorInterface;
 use Symfony\Component\HttpKernel\Exception\HttpExceptionInterface;
 use Symfony\Component\EventDispatcher\Attribute\AsEventListener;
 
 #[AsEventListener]
 class ExceptionListener
 {
+    public function __construct(
+        private ApiResponseFactory $responseFactory,
+        private TranslatorInterface $translator
+    ) {}
+
     public function __invoke(ExceptionEvent $event): void
     {
         $exception = $event->getThrowable();
+        $statusCode = ($exception instanceof HttpExceptionInterface) ? $exception->getStatusCode() : 500;
 
-        $statusCode = ($exception instanceof HttpException) ? $exception->getStatusCode() : 500;
+        $message = $this->translator->trans('api.exception_listener.error_message.generic');
+        $errors = ['error' => $exception->getMessage()];
+        $debug = null;
 
-        $responseData = [
-            'status'  => 'error',
-            'message' => 'An internal error occurred.',
-        ];
-        
-        $environment = $_ENV['APP_ENV'];
+        if ($exception instanceof DtoValidationException) {
+            $message = $this->translator->trans('api.exception_listener.error_message.validation');
+            $errors = $exception->getErrors();
+        }
 
-        if ($environment === 'dev') {
-            $responseData['debug'] = [
+        if ($_ENV['APP_ENV'] === 'dev') {
+            $debug = [
                 'message' => $exception->getMessage(),
-                'internal_code' => $exception->getCode(),
                 'file' => $exception->getFile(),
-                'line' => $exception->getLine()
+                'line' => $exception->getLine(),
+                'trace' => $exception->getTrace(),
             ];
         }
 
-        $event->setResponse(new JsonResponse($responseData, $statusCode));
+        $event->setResponse(
+            $this->responseFactory->create($message, [], $errors, $statusCode, $debug)
+        );
     }
 }
