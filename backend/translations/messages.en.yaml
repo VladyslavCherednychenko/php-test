@@ -1,1 +1,26 @@
-api.health_check.success: "Symfony inside Docker is working perfectly!"
+api:
+    health_check:
+        success: "Symfony inside Docker is working perfectly!"
+        response_message: "Health Check Info."
+    exception_listener.error_message:
+        generic: "An internal error occurred."
+        validation: "Validation failed"
+    user_conroller:
+        get_user_list:
+            validation:
+                message: "Incorrect pagination parameters."
+                errors:
+                    pagination: "pagination"
+                    value: "Parameters must be > 0."
+            result.message: "Search results."
+        find_by_id:
+            found: "User found."
+            not_found: "User not found."
+        registration:
+            messages:
+                failed: "Registration failed."
+                created: "User created."
+            errors:
+                generic:
+                    title: "error"
+                    value: "Could not create user."

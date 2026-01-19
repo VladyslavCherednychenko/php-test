@@ -1,0 +1,8 @@
+registration:
+    email.assert:
+        not_blank: "Email is required."
+        email: "Invalid email format."
+        unique: "This value is already used."
+    password.assert:
+        not_blank: "Password is required."
+        password_strength: "Your password is too weak. Try adding uppercase letters, numbers, or special symbols (!@#$%^&*)."
