@@ -47,17 +47,17 @@ class UserController extends AbstractController
         $totalItems = \count($paginator);
 
         return $this->responseFactory->create(
-                message: $this->translator->trans('api.user_conroller.get_user_list.result.message'),
-                data: [
-                    'pagination' => $paginator,
-                    'meta' => [
-                        'total' => $totalItems,
-                        'page' => $page,
-                        'pages' => ceil($totalItems / $limit)
-                    ],
+            message: $this->translator->trans('api.user_conroller.get_user_list.result.message'),
+            data: [
+                'pagination' => $paginator,
+                'meta' => [
+                    'total' => $totalItems,
+                    'page' => $page,
+                    'pages' => ceil($totalItems / $limit)
                 ],
-                context: ['groups' => 'user:read']
-            );
+            ],
+            context: ['groups' => 'user:read']
+        );
     }
 
     #[Route('/{id}', name: 'find_by_id', methods: ['GET'])]
@@ -76,7 +76,8 @@ class UserController extends AbstractController
     }
 
     #[Route('/register', name: 'register', methods: ['POST'])]
-    public function register(#[MapRequestPayload] UserRegistrationDto $dto): JsonResponse {
+    public function register(#[MapRequestPayload] UserRegistrationDto $dto): JsonResponse
+    {
         $user = $this->mapper->map($dto, User::class);
 
         $errors = $this->validator->validate($user);

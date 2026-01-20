@@ -3,11 +3,12 @@
 namespace App\EventListener;
 
 use App\Service\ApiResponseFactory;
-use App\Exception\DtoValidationException;
 use Symfony\Component\HttpKernel\Event\ExceptionEvent;
 use Symfony\Contracts\Translation\TranslatorInterface;
 use Symfony\Component\HttpKernel\Exception\HttpExceptionInterface;
 use Symfony\Component\EventDispatcher\Attribute\AsEventListener;
+use Symfony\Component\HttpKernel\Exception\UnprocessableEntityHttpException;
+use Symfony\Component\Validator\Exception\ValidationFailedException;
 
 #[AsEventListener]
 class ExceptionListener
@@ -26,9 +27,21 @@ class ExceptionListener
         $errors = ['error' => $exception->getMessage()];
         $debug = null;
 
-        if ($exception instanceof DtoValidationException) {
+        if (
+            $exception instanceof UnprocessableEntityHttpException &&
+            $exception->getPrevious() instanceof ValidationFailedException
+        ) {
+
+            $validationException = $exception->getPrevious();
+            $violations = $validationException->getViolations();
+
+            $violationsList = [];
+            foreach ($violations as $violation) {
+                $violationsList[$violation->getPropertyPath()][] = $violation->getMessage();
+            }
+
             $message = $this->translator->trans('api.exception_listener.error_message.validation');
-            $errors = $exception->getErrors();
+            $errors = $violationsList;
         }
 
         if ($_ENV['APP_ENV'] === 'dev') {

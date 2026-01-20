@@ -24,17 +24,20 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\GeneratedValue]
     #[ORM\Column(name: 'user_id', type: 'integer')]
     #[Groups(['user:read'])]
+    #[Assert\Type('string', message: 'validation.assert.type_string')]
     private ?int $id = null;
 
     #[ORM\Column(type: 'string', length: 255, unique: true)]
     #[Groups(['user:read'])]
-    #[Assert\NotBlank(message: 'registration.email.assert.not_blank')]
-    #[Assert\Email(message: 'registration.email.assert.email')]
+    #[Assert\NotBlank(message: 'validation.assert.not_blank')]
+    #[Assert\Email(message: 'validation.assert.email')]
+    #[Assert\Type('string', message: 'validation.assert.type_string')]
     private ?string $email = null;
 
     #[ORM\Column(type: 'string', length: 255)]
-    #[Assert\NotBlank(message: 'registration.password.assert.not_blank')]
-    #[Assert\PasswordStrength(message: 'registration.password.assert.password_strength')]
+    #[Assert\NotBlank(message: 'validation.assert.not_blank')]
+    #[Assert\PasswordStrength(message: 'validation.assert.password_strength')]
+    #[Assert\Type('string', message: 'validation.assert.type_string')]
     private ?string $password = null;
 
     #[ORM\Column(enumType: UserRole::class, options: ['default' => 0])]
