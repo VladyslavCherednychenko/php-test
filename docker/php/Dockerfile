@@ -12,6 +12,17 @@ RUN docker-php-ext-install \
     intl \
     opcache
 
+RUN apk add --no-cache --virtual .build-deps \
+    autoconf \
+    g++ \
+    make \
+    linux-headers \
+    && pecl install xdebug \
+    && docker-php-ext-enable xdebug \
+    && apk del .build-deps
+
+COPY docker/php/php.ini /usr/local/etc/php/conf.d/custom.ini
+
 COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
 
 WORKDIR /var/www/html
