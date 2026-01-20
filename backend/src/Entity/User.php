@@ -14,17 +14,13 @@ use Symfony\Component\Security\Core\User\UserInterface;
 
 #[ORM\Entity(repositoryClass: UserRepository::class)]
 #[ORM\Table(name: 'users')]
-#[UniqueEntity(
-    fields: ['email'],
-    message: 'registration.email.assert.unique'
-)]
+#[UniqueEntity(fields: ['email'], message: 'validation.assert.unique')]
 class User implements UserInterface, PasswordAuthenticatedUserInterface
 {
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column(name: 'user_id', type: 'integer')]
     #[Groups(['user:read'])]
-    #[Assert\Type('string', message: 'validation.assert.type_string')]
     private ?int $id = null;
 
     #[ORM\Column(type: 'string', length: 255, unique: true)]
@@ -74,7 +70,6 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     {
         return $this->role;
     }
-
     public function setRole(UserRole $role): self
     {
         $this->role = $role;
@@ -94,4 +89,22 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         return (string) $this->email;
     }
     public function eraseCredentials(): void {}
+
+    /* RELATIONS */
+    #[ORM\OneToOne(mappedBy: 'user', targetEntity: UserProfile::class, cascade: ['persist', 'remove'])]
+    #[Groups(['user:read'])]
+    private ?UserProfile $profile = null;
+
+    public function getProfile(): ?UserProfile
+    {
+        return $this->profile;
+    }
+    public function setProfile(UserProfile $profile): self
+    {
+        $this->profile = $profile;
+        if ($profile->getUser() !== $this) {
+            $profile->setUser($this);
+        }
+        return $this;
+    }
 }
