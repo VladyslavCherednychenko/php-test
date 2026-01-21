@@ -1,13 +1,12 @@
 <?php
-
 namespace App\Controller;
 
 use App\Service\ApiResponseFactory;
 use Doctrine\ORM\EntityManagerInterface;
-use Symfony\Component\Routing\Attribute\Route;
-use Symfony\Component\HttpFoundation\JsonResponse;
-use Symfony\Contracts\Translation\TranslatorInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\JsonResponse;
+use Symfony\Component\Routing\Attribute\Route;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
 #[Route('/api/health', name: '_api_health_')]
 class HealthCheckController extends AbstractController
@@ -36,7 +35,7 @@ class HealthCheckController extends AbstractController
                 'status' => 'ok',
                 'message' => $this->translator->trans('api.health_check.success'),
                 'php_version' => PHP_VERSION,
-                'db_available' => $isDbAlive
+                'db_available' => $isDbAlive,
             ],
         );
     }

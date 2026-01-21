@@ -1,5 +1,4 @@
 <?php
-
 namespace App\Dto;
 
 use App\Entity\User;
@@ -7,7 +6,7 @@ use Symfony\Component\ObjectMapper\Attribute\Map;
 use Symfony\Component\Validator\Constraints as Assert;
 
 #[Map(target: User::class)]
-readonly class UserAuthDto
+readonly class AuthDto
 {
     public function __construct(
         #[Assert\NotBlank(message: 'validation.assert.not_blank')]

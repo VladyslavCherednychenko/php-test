@@ -24,3 +24,16 @@ api:
                 generic:
                     title: "error"
                     value: "Could not create user."
+    auth:
+        login:
+            invalid_credentials:
+                message: "Access denied."
+                error:
+                    title: "credentials"
+                    value: "Invalid credentials."
+            incorrect_credentials:
+                message: "Access denied."
+                error:
+                    title: "credentials"
+                    value: "Email or password is incorrect."
+            access_granted: "Access granted."
