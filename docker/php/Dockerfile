@@ -4,15 +4,13 @@ RUN apk add --no-cache \
     libpq-dev \
     icu-dev \
     git \
-    unzip
-
-RUN docker-php-ext-install \
+    unzip \
+    && docker-php-ext-install \
     pdo \
     pdo_pgsql \
     intl \
-    opcache
-
-RUN apk add --no-cache --virtual .build-deps \
+    opcache \
+    && apk add --no-cache --virtual .build-deps \
     autoconf \
     g++ \
     make \
