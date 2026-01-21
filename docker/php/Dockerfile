@@ -28,11 +28,13 @@ COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
 WORKDIR /var/www/html
 
 COPY backend/composer.* ./
+RUN composer install --no-interaction --no-scripts --no-autoloader
 
 COPY docker/php/docker-entrypoint.sh /usr/local/bin/docker-entrypoint
 RUN chmod +x /usr/local/bin/docker-entrypoint
 
 COPY backend/ .
+RUN composer dump-autoload --optimize
 
 ENTRYPOINT ["docker-entrypoint"]
 CMD ["php-fpm"]

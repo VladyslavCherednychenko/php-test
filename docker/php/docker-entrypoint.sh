@@ -6,10 +6,6 @@ set -e
 mkdir -p var/cache var/log
 chmod -R 777 var/
 
-# Install dependencies if the vendor folder does not yet exist or is empty
-if [ ! -d "vendor" ] || [ -z "$(ls -A vendor)" ]; then
-    echo "--- Installing Symfony dependencies ---"
-    composer install --no-interaction --optimize-autoloader
-fi
+composer install --no-interaction --optimize-autoloader
 
 exec "$@"
