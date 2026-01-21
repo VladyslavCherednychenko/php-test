@@ -1,12 +1,11 @@
 <?php
-
 namespace App\Repository;
 
 use App\Entity\User;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\ORM\EntityManagerInterface;
-use Doctrine\Persistence\ManagerRegistry;
 use Doctrine\ORM\Tools\Pagination\Paginator;
+use Doctrine\Persistence\ManagerRegistry;
 
 class UserRepository extends ServiceEntityRepository implements UserRepositoryInterface
 {
@@ -29,6 +28,11 @@ class UserRepository extends ServiceEntityRepository implements UserRepositoryIn
     public function getUserById(int $id): ?User
     {
         return $this->findOneBy(['id' => $id]);
+    }
+
+    public function getUserByEmail(string $email): ?User
+    {
+        return $this->findOneBy(['email' => $email]);
     }
 
     public function createUser(User $user): User

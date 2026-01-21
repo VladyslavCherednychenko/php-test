@@ -1,5 +1,4 @@
 <?php
-
 namespace App\Entity;
 
 use App\Repository\RefreshTokenRepository;
@@ -17,11 +16,11 @@ class RefreshToken
     #[ORM\Column(name: 'token', type: 'string', length: 255, unique: true)]
     private string $token;
 
-    #[ORM\Column(name: 'expires_at', type: 'datetimetz')]
-    private \DateTimeInterface $expiresAt;
+    #[ORM\Column(name: 'expires_at', type: 'datetimetz_immutable')]
+    private \DateTimeImmutable $expiresAt;
 
-    #[ORM\Column(name: 'created_at', type: 'datetimetz')]
-    private \DateTimeInterface $createdAt;
+    #[ORM\Column(name: 'created_at', type: 'datetimetz_immutable')]
+    private \DateTimeImmutable $createdAt;
 
     #[ORM\ManyToOne(targetEntity: User::class)]
     #[ORM\JoinColumn(name: 'user_id', referencedColumnName: 'user_id', nullable: false, onDelete: 'CASCADE')]

@@ -1,5 +1,4 @@
 <?php
-
 namespace App\Service;
 
 use App\Entity\RefreshToken;
@@ -19,10 +18,19 @@ class RefreshTokenService implements RefreshTokenServiceInterface
 
         $token->setToken(bin2hex(random_bytes(32)));
 
-        $token->setExpiresAt((new \DateTime())->modify(sprintf('+%d seconds', $ttl)));
+        $expiresAt = new \DateTimeImmutable(sprintf('+%d seconds', $ttl));
+        $token->setExpiresAt($expiresAt);
 
         $this->repository->save($token);
 
         return $token;
+    }
+
+    public function findValidToken(string $token): ?RefreshToken
+    {
+        if ($token == null || $token == '') {
+            return null;
+        }
+        return $this->repository->findValidToken($token);
     }
 }

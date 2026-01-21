@@ -1,13 +1,10 @@
 <?php
-
 namespace App\Repository;
 
-use App\Dto\UserAuthDto;
 use App\Entity\RefreshToken;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\Persistence\ManagerRegistry;
-
 
 class RefreshTokenRepository extends ServiceEntityRepository implements RefreshTokenRepositoryInterface
 {

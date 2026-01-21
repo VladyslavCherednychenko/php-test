@@ -1,5 +1,4 @@
 <?php
-
 namespace App\Repository;
 
 use App\Entity\User;
@@ -10,6 +9,8 @@ interface UserRepositoryInterface
     public function getUserList(int $offset, int $limit): Paginator;
 
     public function getUserById(int $id): ?User;
+
+    public function getUserByEmail(string $email): ?User;
 
     public function createUser(User $user): User;
 }

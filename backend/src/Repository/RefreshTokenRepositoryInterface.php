@@ -1,8 +1,6 @@
 <?php
-
 namespace App\Repository;
 
-use App\Dto\UserAuthDto;
 use App\Entity\RefreshToken;
 
 interface RefreshTokenRepositoryInterface
