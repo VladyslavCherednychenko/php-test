@@ -37,4 +37,9 @@ class RefreshTokenRepository extends ServiceEntityRepository implements RefreshT
             ->setParameter('now', new \DateTime())
             ->execute();
     }
+
+    public function deleteToken(RefreshToken $refreshToken): void
+    {
+        $this->entityManager->remove($refreshToken);
+    }
 }

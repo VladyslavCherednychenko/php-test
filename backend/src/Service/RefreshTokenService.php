@@ -33,4 +33,11 @@ class RefreshTokenService implements RefreshTokenServiceInterface
         }
         return $this->repository->findValidToken($token);
     }
+
+    public function rotateToken(RefreshToken $refreshToken): RefreshToken
+    {
+        $user = $refreshToken->getUser();
+        $this->repository->deleteToken($refreshToken);
+        return $this->createToken($user);
+    }
 }

@@ -10,4 +10,6 @@ interface RefreshTokenRepositoryInterface
     public function findValidToken(string $token): ?RefreshToken;
 
     public function clearExpired(): int;
+
+    public function deleteToken(RefreshToken $refreshToken): void;
 }

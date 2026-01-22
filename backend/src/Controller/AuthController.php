@@ -10,6 +10,7 @@ use App\Service\RefreshTokenServiceInterface;
 use App\Service\UserServiceInterface;
 use Lexik\Bundle\JWTAuthenticationBundle\Services\JWTTokenManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\Cookie;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Attribute\MapRequestPayload;
@@ -54,19 +55,30 @@ class AuthController extends AbstractController
         try {
             $newUser = $this->userService->createUser($user);
 
-            // $accessToken = $this->jwtManager->create($user);
-            // $refreshToken = $this->refreshTokenService->createToken($user);
+            $accessToken = $this->jwtManager->create($newUser);
+            $refreshToken = $this->refreshTokenService->createToken($newUser);
 
-            return $this->responseFactory->create(
+            $response = $this->responseFactory->create(
                 message: $this->translator->trans('api.user_conroller.registration.messages.created'),
                 data: [
-                    // 'access_token' => $accessToken,
-                    // 'refresh_token' => $refreshToken->getToken(),
+                    'access_token' => $accessToken,
                     'user' => $newUser,
                 ],
                 statusCode: 201,
                 context: ['groups' => 'user:read']
             );
+
+            $response->headers->setCookie(
+                Cookie::create('REFRESH_TOKEN')
+                    ->withValue($refreshToken->getToken())
+                    ->withExpires($refreshToken->getExpiresAt())
+                    ->withHttpOnly(true)
+                    ->withSecure(true)
+                    ->withSameSite(Cookie::SAMESITE_STRICT)
+                    ->withPath('/api/auth/token/refresh')
+            );
+
+            return $response;
         } catch (\Exception $e) {
             return $this->responseFactory->create(
                 message: $this->translator->trans('api.user_conroller.registration.messages.failed'),
@@ -109,38 +121,72 @@ class AuthController extends AbstractController
         $accessToken = $this->jwtManager->create($user);
         $refreshToken = $this->refreshTokenService->createToken($user);
 
-        return $this->responseFactory->create(
+        $response = $this->responseFactory->create(
             message: $this->translator->trans('api.auth.login.access_granted'),
             data: [
                 'access_token' => $accessToken,
-                'refresh_token' => $refreshToken->getToken(),
                 'user' => $user,
             ],
             context: ['groups' => 'user:read']
         );
+
+        $response->headers->setCookie(
+            Cookie::create('REFRESH_TOKEN')
+                ->withValue($refreshToken->getToken())
+                ->withExpires($refreshToken->getExpiresAt())
+                ->withHttpOnly(true)
+                ->withSecure(true)
+                ->withSameSite(Cookie::SAMESITE_STRICT)
+                ->withPath('/api/auth/token/refresh')
+        );
+
+        return $response;
     }
 
     #[Route('/token/refresh', name: 'token_refresh', methods: ['POST'])]
     public function refresh(Request $request): JsonResponse
     {
-        $data = json_decode($request->getContent(), true);
-        $tokenString = $data['refresh_token'] ?? null;
+        $tokenString = $request->cookies->get('REFRESH_TOKEN');
 
         if (! $tokenString) {
-            return new JsonResponse(['error' => 'Missing refresh token'], 400);
+            return $this->responseFactory->create(
+                message: $this->translator->trans('api.auth.token.refresh.missing'),
+                statusCode: 401
+            );
         }
 
         $refreshToken = $this->refreshTokenService->findValidToken($tokenString);
 
         if (! $refreshToken) {
-            return new JsonResponse(['error' => 'Invalid or expired refresh token'], 401);
+            return $this->responseFactory->create(
+                message: $this->translator->trans('api.auth.token.refresh.expired'),
+                statusCode: 401
+            );
         }
 
         $user = $refreshToken->getUser();
         $newAccessToken = $this->jwtManager->create($user);
+        $newRefreshToken = $this->refreshTokenService->rotateToken($refreshToken);
 
-        return new JsonResponse([
-            'access_token' => $newAccessToken,
-        ]);
+        $response = $this->responseFactory->create(
+            message: $this->translator->trans('api.auth.token.refresh.success'),
+            data: [
+                'access_token' => $newAccessToken,
+                'user' => $user,
+            ],
+            context: ['groups' => 'user:read']
+        );
+
+        $response->headers->setCookie(
+            Cookie::create('REFRESH_TOKEN')
+                ->withValue($newRefreshToken->getToken())
+                ->withExpires($newRefreshToken->getExpiresAt())
+                ->withHttpOnly(true)
+                ->withSecure(true)
+                ->withSameSite(Cookie::SAMESITE_STRICT)
+                ->withPath('/api/auth/token/refresh')
+        );
+
+        return $response;
     }
 }
