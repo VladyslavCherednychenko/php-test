@@ -1,12 +1,11 @@
 <?php
-
 namespace App\Entity;
 
-use Doctrine\ORM\Mapping as ORM;
 use App\Repository\UserProfileRepository;
+use Doctrine\ORM\Mapping as ORM;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
-use Symfony\Component\Validator\Constraints as Assert;
 use Symfony\Component\Serializer\Attribute\Groups;
+use Symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\Table(name: 'user_profile')]
 #[ORM\Entity(repositoryClass: UserProfileRepository::class)]
@@ -24,10 +23,10 @@ class UserProfile
     #[Groups(['user:read'])]
     private ?User $user = null;
 
-    #[ORM\Column(type: 'string', length: 50, unique: true)]
+    #[ORM\Column(type: 'string', length: 50, unique: true, nullable: false)]
     #[Assert\NotBlank(message: 'validation.assert.not_blank')]
     #[Groups(['user:read'])]
-    private ?string $username = null;
+    private string $username;
 
     #[ORM\Column(name: 'first_name', type: 'string', length: 50, nullable: true)]
     #[Groups(['user:read'])]

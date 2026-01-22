@@ -1,5 +1,4 @@
 <?php
-
 namespace App\Repository;
 
 use App\Entity\UserProfile;
@@ -14,12 +13,12 @@ class UserProfileRepository extends ServiceEntityRepository implements UserProfi
         parent::__construct($registry, UserProfile::class);
     }
 
-    public function getProfileById(int $id)
+    public function getProfileById(int $profile_id)
     {
-        return $this->findOneBy(['id' => $id]);
+        return $this->findOneBy(['id' => $profile_id]);
     }
 
-    public function getProfileByUsername(string $query, int $limit = 5)
+    public function findProfilesByUsername(string $query, int $limit = 5)
     {
         return $this->createQueryBuilder('p')
             ->where('p.username LIKE :query')

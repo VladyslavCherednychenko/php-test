@@ -1,9 +1,9 @@
 <?php
-namespace App\Repository;
+namespace App\Service;
 
 use App\Entity\UserProfile;
 
-interface UserProfileRepositoryInterface
+interface UserProfileServiceInterface
 {
     public function getProfileById(int $profile_id);
 
