@@ -18,11 +18,16 @@ class UserProfileRepository extends ServiceEntityRepository implements UserProfi
         return $this->findOneBy(['id' => $profile_id]);
     }
 
-    public function findProfilesByUsername(string $query, int $limit = 5)
+    public function getUserProfile(int $user_id): ?UserProfile
+    {
+        return $this->findOneBy(['user_id' => $user_id]);
+    }
+
+    public function findProfilesByUsername(string $username, int $limit = 5)
     {
         return $this->createQueryBuilder('p')
             ->where('p.username LIKE :query')
-            ->setParameter('query', '%' . $query . '%')
+            ->setParameter('query', '%' . $username . '%')
             ->setMaxResults($limit)
             ->getQuery()
             ->getResult();

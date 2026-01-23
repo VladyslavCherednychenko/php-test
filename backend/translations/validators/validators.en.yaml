@@ -5,3 +5,6 @@ validation:
         unique: "This value is already used."
         string: "This value should be of type string."
         password_strength: "Your password is too weak. Try adding uppercase letters, numbers, or special symbols (!@#$%^&*)."
+        length:
+            max_50: "Length should be less than 50 symbols."
+            max_255: "Length should be less than 255 symbols."

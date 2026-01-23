@@ -20,8 +20,7 @@ class UserProfile
 
     #[ORM\OneToOne(targetEntity: User::class, inversedBy: 'profile')]
     #[ORM\JoinColumn(name: 'user_id', referencedColumnName: 'user_id', nullable: false, onDelete: 'CASCADE')]
-    #[Groups(['user:read'])]
-    private ?User $user = null;
+    private User $user;
 
     #[ORM\Column(type: 'string', length: 50, unique: true, nullable: false)]
     #[Assert\NotBlank(message: 'validation.assert.not_blank')]
@@ -49,6 +48,11 @@ class UserProfile
     public function getId(): ?int
     {
         return $this->id;
+    }
+    public function setId(int $id)
+    {
+        $this->id = $id;
+        return $this;
     }
 
     public function getUser(): ?User

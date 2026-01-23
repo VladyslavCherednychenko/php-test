@@ -41,3 +41,15 @@ api:
             missing: "Refresh token is missing."
             expired: "Invalid or expired refresh token."
             success: "Tokens have been updated."
+    profile_conroller:
+        find_by_id:
+            not_found: "Profile not found."
+            found: "Profile found."
+        find_profiles_by_username:
+            validation:
+                message: "Incorrect request parameters"
+                username_is_empty: "Username should not be empty."
+                limit_less_than_one: "Limit should be greater than 0."
+            result.message: "Profiles:"
+        create_or_update_profile.update.message: "Profile updated."
+service.profile.create_or_update.access_denied: "You do not have access to this resource."
