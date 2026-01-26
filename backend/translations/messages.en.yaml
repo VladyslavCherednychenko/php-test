@@ -1,56 +1,46 @@
-api:
-    health_check:
-        success: "Symfony inside Docker is working perfectly!"
-        response_message: "Health Check Info."
-    exception_listener.error_message:
-        generic: "An internal error occurred."
-        validation: "Validation failed"
-    user_conroller:
-        get_user_list:
-            validation:
-                message: "Incorrect pagination parameters."
-                errors:
-                    pagination: "pagination"
-                    value: "Parameters must be > 0."
-            result.message: "Search results."
-        find_by_id:
-            found: "User found."
-            not_found: "User not found."
-        registration:
-            messages:
-                failed: "Registration failed."
-                created: "User created."
-            errors:
-                generic:
-                    title: "error"
-                    value: "Could not create user."
-    auth:
-        login:
-            invalid_credentials:
-                message: "Access denied."
-                error:
-                    title: "credentials"
-                    value: "Invalid credentials."
-            incorrect_credentials:
-                message: "Access denied."
-                error:
-                    title: "credentials"
-                    value: "Email or password is incorrect."
-            access_granted: "Access granted."
-        token.refresh:
-            missing: "Refresh token is missing."
-            expired: "Invalid or expired refresh token."
-            success: "Tokens have been updated."
-    profile_conroller:
-        find_by_id:
-            not_found: "Profile not found."
-            found: "Profile found."
-        find_profiles_by_username:
-            validation:
-                message: "Incorrect request parameters"
-                username_is_empty: "Username should not be empty."
-                limit_less_than_one: "Limit should be greater than 0."
-            result.message: "Profiles:"
-        create_profile.message: "Profile created."
-        update_profile.message: "Profile updated."
+exception_listener.error_message:
+    generic: "An internal error occurred."
+    validation: "Validation failed."
+api.health_check:
+    success: "Symfony inside Docker is working perfectly!"
+    response_message: "Health Check Info."
+    db_online: "Online."
+    db_offline: "Offline."
+api.users:
+    list:
+        validation:
+            message: "Incorrect pagination parameters."
+            errors: "Pagination parameters must be > 0."
+        result_message: "Search results."
+    find_by_id:
+        found: "User found."
+        not_found: "User not found."
+api.auth:
+    register:
+        messages:
+            failed: "Registration failed."
+            created: "User created."
+        errors:
+            generic: "Could not create user."
+    login:
+        invalid_credentials: "Invalid credentials."
+        incorrect_credentials: "Email or password is incorrect."
+        access_denied: "Access denied."
+        access_granted: "Access granted."
+    token_refresh:
+        missing: "Refresh token is missing."
+        expired: "Invalid or expired refresh token."
+        success: "Tokens have been updated."
+api.profiles:
+    find_by_id:
+        not_found: "Profile not found."
+        found: "Profile found."
+    find_profiles_by_username:
+        validation:
+            message: "Incorrect request parameters"
+            username_is_empty: "Username should not be empty."
+            limit_less_than_one: "Limit should be greater than 0."
+        result.message: "Profiles:"
+    create_profile.message: "Profile created."
+    update_profile.message: "Profile updated."
 service.profile.create_or_update.access_denied: "You do not have access to this resource."

@@ -23,7 +23,7 @@ class ExceptionListener
         $exception = $event->getThrowable();
         $statusCode = ($exception instanceof HttpExceptionInterface) ? $exception->getStatusCode() : 500;
 
-        $message = $this->translator->trans('api.exception_listener.error_message.generic');
+        $message = $this->translator->trans('exception_listener.error_message.generic');
         $errors = ['error' => $exception->getMessage()];
         $debug = null;
 
@@ -40,7 +40,7 @@ class ExceptionListener
                 $violationsList[$violation->getPropertyPath()][] = $violation->getMessage();
             }
 
-            $message = $this->translator->trans('api.exception_listener.error_message.validation');
+            $message = $this->translator->trans('exception_listener.error_message.validation');
             $errors = $violationsList;
         }
 

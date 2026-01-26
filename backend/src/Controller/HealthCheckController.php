@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Controller;
 
 use App\Service\ApiResponseFactory;
@@ -8,7 +9,7 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
-#[Route('/api/health', name: '_api_health_')]
+#[Route('/api/health', name: 'api_health_')]
 class HealthCheckController extends AbstractController
 {
     public function __construct(
@@ -20,13 +21,13 @@ class HealthCheckController extends AbstractController
     #[Route('', name: 'check', methods: ['GET'])]
     public function healthCheck(): JsonResponse
     {
-        $isDbAlive = true;
+        $db_message = $this->translator->trans('api.health_check.db_online');
 
         try {
             $connection = $this->entityManager->getConnection();
             $connection->executeQuery('SELECT 1');
         } catch (\Exception $e) {
-            $isDbAlive = false;
+            $isDbAlive = $this->translator->trans('api.health_check.db_offline');
         }
 
         return $this->responseFactory->create(
@@ -35,7 +36,7 @@ class HealthCheckController extends AbstractController
                 'status' => 'ok',
                 'message' => $this->translator->trans('api.health_check.success'),
                 'php_version' => PHP_VERSION,
-                'db_available' => $isDbAlive,
+                'DB' => $isDbAlive,
             ],
         );
     }

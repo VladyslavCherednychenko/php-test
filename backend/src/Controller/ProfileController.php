@@ -14,7 +14,7 @@ use Symfony\Component\HttpKernel\Attribute\MapRequestPayload;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
-#[Route('/api/profiles', name: '_api_profiles_')]
+#[Route('/api/profiles', name: 'api_profiles_')]
 class ProfileController extends AbstractController
 {
     public function __construct(
@@ -29,11 +29,11 @@ class ProfileController extends AbstractController
     {
         $profile = $this->userProfileService->getProfileById($id);
         if ($profile == null) {
-            return $this->responseFactory->create($this->translator->trans('api.profile_conroller.find_by_id.not_found'), statusCode: 404);
+            return $this->responseFactory->create($this->translator->trans('api.profiles.find_by_id.not_found'), statusCode: 404);
         }
 
         return $this->responseFactory->create(
-            message: $this->translator->trans('api.profile_conroller.find_by_id.found'),
+            message: $this->translator->trans('api.profiles.find_by_id.found'),
             data: ['profile' => $profile],
             context: ['groups' => 'user:read']
         );
@@ -48,22 +48,22 @@ class ProfileController extends AbstractController
 
         if ($username === null) {
             return $this->responseFactory->create(
-                $this->translator->trans('api.profile_conroller.find_profiles_by_username.validation.message'),
-                errors: ['username' => $this->translator->trans('api.profile_conroller.find_profiles_by_username.validation.username_is_empty')],
+                $this->translator->trans('api.profiles.find_profiles_by_username.validation.message'),
+                errors: ['username' => $this->translator->trans('api.profiles.find_profiles_by_username.validation.username_is_empty')],
                 statusCode: 400
             );
         }
         if ($limit < 1) {
             return $this->responseFactory->create(
-                $this->translator->trans('api.profile_conroller.find_profiles_by_username.validation.message'),
-                errors: ['username' => $this->translator->trans('api.profile_conroller.find_profiles_by_username.validation.limit_less_than_one')],
+                $this->translator->trans('api.profiles.find_profiles_by_username.validation.message'),
+                errors: ['username' => $this->translator->trans('api.profiles.find_profiles_by_username.validation.limit_less_than_one')],
                 statusCode: 400
             );
         }
 
         $profiles = $this->userProfileService->findProfilesByUsername($username, $limit);
         return $this->responseFactory->create(
-            message: $this->translator->trans('api.profile_conroller.find_profiles_by_username.result.message'),
+            message: $this->translator->trans('api.profiles.find_profiles_by_username.result.message'),
             data: [
                 'profiles' => $profiles,
             ],
@@ -77,7 +77,7 @@ class ProfileController extends AbstractController
         $result = $this->createOrUpdateProfile($profile);
 
         return $this->responseFactory->create(
-            message: $this->translator->trans('api.profile_conroller.create_profile.message'),
+            message: $this->translator->trans('api.profiles.create_profile.message'),
             data: ['profile' => $result],
             context: ['groups' => 'user:read']
         );
@@ -89,7 +89,7 @@ class ProfileController extends AbstractController
         $result = $this->createOrUpdateProfile($profile);
 
         return $this->responseFactory->create(
-            message: $this->translator->trans('api.profile_conroller.update_profile.message'),
+            message: $this->translator->trans('api.profiles.update_profile.message'),
             data: ['profile' => $result],
             context: ['groups' => 'user:read']
         );

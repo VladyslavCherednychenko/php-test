@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Controller;
 
 use App\Dto\AuthDto;
@@ -19,7 +20,7 @@ use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
-#[Route('/api/auth', name: 'auth_')]
+#[Route('/api/auth', name: 'api_auth_')]
 class AuthController extends AbstractController
 {
     public function __construct(
@@ -46,7 +47,7 @@ class AuthController extends AbstractController
             }
 
             return $this->responseFactory->create(
-                message: $this->translator->trans('api.user_conroller.registration.messages.failed'),
+                message: $this->translator->trans('api.auth.register.messages.failed'),
                 errors: $messages,
                 statusCode: 400
             );
@@ -59,7 +60,7 @@ class AuthController extends AbstractController
             $refreshToken = $this->refreshTokenService->createToken($newUser);
 
             $response = $this->responseFactory->create(
-                message: $this->translator->trans('api.user_conroller.registration.messages.created'),
+                message: $this->translator->trans('api.auth.register.messages.created'),
                 data: [
                     'access_token' => $accessToken,
                     'user' => $newUser,
@@ -81,10 +82,9 @@ class AuthController extends AbstractController
             return $response;
         } catch (\Exception $e) {
             return $this->responseFactory->create(
-                message: $this->translator->trans('api.user_conroller.registration.messages.failed'),
+                message: $this->translator->trans('api.auth.register.messages.failed'),
                 errors: [
-                    $this->translator->trans('api.user_conroller.registration.errors.generic.title') =>
-                    $this->translator->trans('api.user_conroller.registration.errors.generic.value'),
+                    'error' => $this->translator->trans('api.auth.register.errors.generic.value'),
                 ],
                 statusCode: 409
             );
@@ -96,10 +96,9 @@ class AuthController extends AbstractController
     {
         if (! $dto) {
             return $this->responseFactory->create(
-                $this->translator->trans('api.auth.login.invalid_credentials.message'),
+                $this->translator->trans('api.auth.login.access_denied'),
                 errors: [
-                    $this->translator->trans('api.auth.login.invalid_credentials.error.title') =>
-                    $this->translator->trans('api.auth.login.invalid_credentials.error.value'),
+                    'credentials' => $this->translator->trans('api.auth.login.invalid_credentials'),
                 ],
                 statusCode: 401
             );
@@ -109,10 +108,9 @@ class AuthController extends AbstractController
 
         if (! $user) {
             return $this->responseFactory->create(
-                $this->translator->trans('api.auth.login.incorrect_credentials.message'),
+                $this->translator->trans('api.auth.login.access_denied'),
                 errors: [
-                    $this->translator->trans('api.auth.login.incorrect_credentials.error.title') =>
-                    $this->translator->trans('api.auth.login.incorrect_credentials.error.value'),
+                    'credentials' => $this->translator->trans('api.auth.login.incorrect_credentials'),
                 ],
                 statusCode: 401
             );
@@ -150,7 +148,7 @@ class AuthController extends AbstractController
 
         if (! $tokenString) {
             return $this->responseFactory->create(
-                message: $this->translator->trans('api.auth.token.refresh.missing'),
+                message: $this->translator->trans('api.auth.token_refresh.missing'),
                 statusCode: 401
             );
         }
@@ -159,7 +157,7 @@ class AuthController extends AbstractController
 
         if (! $refreshToken) {
             return $this->responseFactory->create(
-                message: $this->translator->trans('api.auth.token.refresh.expired'),
+                message: $this->translator->trans('api.auth.token_refresh.expired'),
                 statusCode: 401
             );
         }
@@ -169,7 +167,7 @@ class AuthController extends AbstractController
         $newRefreshToken = $this->refreshTokenService->rotateToken($refreshToken);
 
         $response = $this->responseFactory->create(
-            message: $this->translator->trans('api.auth.token.refresh.success'),
+            message: $this->translator->trans('api.auth.token_refresh.success'),
             data: [
                 'access_token' => $newAccessToken,
                 'user' => $user,
