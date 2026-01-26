@@ -1,6 +1,8 @@
 <?php
+
 namespace App\Service;
 
+use App\Constants\RefreshTokenConstants;
 use App\Entity\RefreshToken;
 use App\Entity\User;
 use App\Repository\RefreshTokenRepositoryInterface;
@@ -11,14 +13,14 @@ class RefreshTokenService implements RefreshTokenServiceInterface
         private RefreshTokenRepositoryInterface $repository
     ) {}
 
-    public function createToken(User $user, int $ttl = 2592000): RefreshToken
+    public function createToken(User $user): RefreshToken
     {
         $token = new RefreshToken();
         $token->setUser($user);
 
         $token->setToken(bin2hex(random_bytes(32)));
 
-        $expiresAt = new \DateTimeImmutable(sprintf('+%d seconds', $ttl));
+        $expiresAt = new \DateTimeImmutable(sprintf('+%d seconds', RefreshTokenConstants::TOKEN_TTL));
         $token->setExpiresAt($expiresAt);
 
         $this->repository->save($token);
