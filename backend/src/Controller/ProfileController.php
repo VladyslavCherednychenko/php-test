@@ -1,7 +1,9 @@
 <?php
+
 namespace App\Controller;
 
 use App\Dto\ProfileDto;
+use App\Entity\UserProfile;
 use App\Service\ApiResponseFactory;
 use App\Service\UserProfileService;
 use App\Service\UserService;
@@ -33,7 +35,8 @@ class ProfileController extends AbstractController
         return $this->responseFactory->create(
             message: $this->translator->trans('api.profile_conroller.find_by_id.found'),
             data: ['profile' => $profile],
-            context: ['groups' => 'user:read']);
+            context: ['groups' => 'user:read']
+        );
     }
 
     #[Route('/', name: 'find_profiles_by_username', methods: ['GET'])]
@@ -47,13 +50,15 @@ class ProfileController extends AbstractController
             return $this->responseFactory->create(
                 $this->translator->trans('api.profile_conroller.find_profiles_by_username.validation.message'),
                 errors: ['username' => $this->translator->trans('api.profile_conroller.find_profiles_by_username.validation.username_is_empty')],
-                statusCode: 400);
+                statusCode: 400
+            );
         }
         if ($limit < 1) {
             return $this->responseFactory->create(
                 $this->translator->trans('api.profile_conroller.find_profiles_by_username.validation.message'),
                 errors: ['username' => $this->translator->trans('api.profile_conroller.find_profiles_by_username.validation.limit_less_than_one')],
-                statusCode: 400);
+                statusCode: 400
+            );
         }
 
         $profiles = $this->userProfileService->findProfilesByUsername($username, $limit);
@@ -62,18 +67,36 @@ class ProfileController extends AbstractController
             data: [
                 'profiles' => $profiles,
             ],
-            context: ['groups' => 'user:read']);
+            context: ['groups' => 'user:read']
+        );
     }
 
-    #[Route('/', name: 'create_or_update_profile', methods: ['POST'])]
-    public function createOrUpdateProfile(#[MapRequestPayload] ProfileDto $profile): JsonResponse
+    #[Route('/', name: 'create_profile', methods: ['POST'])]
+    public function createProfile(#[MapRequestPayload] ProfileDto $profile): JsonResponse
     {
-        $result = $this->userProfileService->createOrUpdateProfile($profile);
+        $result = $this->createOrUpdateProfile($profile);
 
-        // is it ok to never return a 'created' status?
         return $this->responseFactory->create(
-            message: $this->translator->trans('api.profile_conroller.create_or_update_profile.update.message'),
+            message: $this->translator->trans('api.profile_conroller.create_profile.message'),
             data: ['profile' => $result],
-            context: ['groups' => 'user:read']);
+            context: ['groups' => 'user:read']
+        );
+    }
+
+    #[Route('/', name: 'update_profile', methods: ['PUT'])]
+    public function UpdateProfile(#[MapRequestPayload] ProfileDto $profile): JsonResponse
+    {
+        $result = $this->createOrUpdateProfile($profile);
+
+        return $this->responseFactory->create(
+            message: $this->translator->trans('api.profile_conroller.update_profile.message'),
+            data: ['profile' => $result],
+            context: ['groups' => 'user:read']
+        );
+    }
+
+    private function createOrUpdateProfile(ProfileDto $profile): UserProfile
+    {
+        return $this->userProfileService->createOrUpdateProfile($profile);
     }
 }

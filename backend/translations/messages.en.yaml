@@ -51,5 +51,6 @@ api:
                 username_is_empty: "Username should not be empty."
                 limit_less_than_one: "Limit should be greater than 0."
             result.message: "Profiles:"
-        create_or_update_profile.update.message: "Profile updated."
+        create_profile.message: "Profile created."
+        update_profile.message: "Profile updated."
 service.profile.create_or_update.access_denied: "You do not have access to this resource."
