@@ -8,4 +8,7 @@ chmod -R 777 var/
 
 composer install --no-interaction --optimize-autoloader
 
+php bin/console doctrine:database:create --no-interaction --if-not-exists
+php bin/console doctrine:migrations:migrate --no-interaction --allow-no-migration
+
 exec "$@"
