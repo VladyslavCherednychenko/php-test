@@ -1,7 +1,9 @@
 <?php
+
 namespace App\Repository;
 
 use App\Entity\RefreshToken;
+use App\Entity\User;
 
 interface RefreshTokenRepositoryInterface
 {
@@ -12,4 +14,6 @@ interface RefreshTokenRepositoryInterface
     public function clearExpired(): int;
 
     public function deleteToken(RefreshToken $refreshToken): void;
+
+    public function deleteAllTokensFromUser(User $user): void;
 }

@@ -17,6 +17,7 @@ use Symfony\Component\HttpFoundation\Cookie;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Attribute\MapRequestPayload;
+use Symfony\Component\HttpKernel\Exception\UnauthorizedHttpException;
 use Symfony\Component\ObjectMapper\ObjectMapperInterface;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Security\Core\Exception\BadCredentialsException;
@@ -75,26 +76,34 @@ class AuthController extends AbstractController
         );
     }
 
+    // Terminates current session of the user
+    #[Route('/token/terminate/current', name: 'terminate_current_session', methods: ['POST'])]
+    public function terminate(Request $request): JsonResponse
+    {
+        $refreshToken = $this->getRefreshTokenFromRequest($request);
+        $this->refreshTokenService->deleteToken($refreshToken);
+
+        return $this->createResponseAndTerminateSession();
+    }
+
+    // Terminates all sessions of the current user
+    #[Route('/token/terminate/all', name: 'terminate_current_all_user_sessions', methods: ['POST'])]
+    public function terminateAll(Request $request): JsonResponse
+    {
+        $refreshToken = $this->getRefreshTokenFromRequest($request);
+        $user = $refreshToken->getUser();
+
+        $this->refreshTokenService->deleteAllTokensFromUser($user);
+
+        return $this->createResponseAndTerminateSession();
+    }
+
     #[Route('/token/refresh', name: 'token_refresh', methods: ['POST'])]
     public function refresh(Request $request): JsonResponse
     {
-        $tokenString = $request->cookies->get('REFRESH_TOKEN');
-        if (! $tokenString) {
-            return $this->responseFactory->error(
-                $this->translator->trans('api.auth.token_refresh.missing'),
-                statusCode: 401
-            );
-        }
-
-        $refreshToken = $this->refreshTokenService->findValidToken($tokenString);
-        if (! $refreshToken) {
-            return $this->responseFactory->error(
-                $this->translator->trans('api.auth.token_refresh.expired'),
-                statusCode: 401
-            );
-        }
-
+        $refreshToken = $this->getRefreshTokenFromRequest($request);
         $user = $refreshToken->getUser();
+
         $newAccessToken = $this->jwtManager->create($user);
         $newRefreshToken = $this->refreshTokenService->rotateToken($refreshToken);
 
@@ -143,5 +152,31 @@ class AuthController extends AbstractController
                 ->withSameSite(Cookie::SAMESITE_STRICT)
                 ->withPath(RefreshTokenConstants::COOKIE_PATH)
         );
+    }
+
+    private function getRefreshTokenFromRequest(Request $request): RefreshToken
+    {
+        $tokenString = $request->cookies->get('REFRESH_TOKEN')
+            ?? throw new UnauthorizedHttpException('Bearer', $this->translator->trans('api.auth.token_refresh.missing'));
+
+        return $this->refreshTokenService->findValidToken($tokenString)
+            ?? throw new UnauthorizedHttpException('Bearer', $this->translator->trans('api.auth.token_refresh.expired'));
+    }
+
+    private function clearSessionCookies(JsonResponse $response): void
+    {
+        $response->headers->clearCookie(
+            RefreshTokenConstants::COOKIE_NAME,
+            RefreshTokenConstants::COOKIE_PATH
+        );
+    }
+
+    private function createResponseAndTerminateSession(): JsonResponse
+    {
+        $response = $this->responseFactory->success(statusCode: 204);
+
+        $this->clearSessionCookies($response);
+
+        return $response;
     }
 }

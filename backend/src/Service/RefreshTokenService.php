@@ -42,4 +42,14 @@ class RefreshTokenService implements RefreshTokenServiceInterface
         $this->repository->deleteToken($refreshToken);
         return $this->createToken($user);
     }
+
+    public function deleteToken(RefreshToken $refreshToken): void
+    {
+        $this->repository->deleteToken($refreshToken);
+    }
+
+    public function deleteAllTokensFromUser(User $user): void
+    {
+        $this->repository->deleteAllTokensFromUser($user);
+    }
 }

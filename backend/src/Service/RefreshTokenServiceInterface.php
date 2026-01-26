@@ -12,4 +12,8 @@ interface RefreshTokenServiceInterface
     public function findValidToken(string $token): ?RefreshToken;
 
     public function rotateToken(RefreshToken $refreshToken): RefreshToken;
+
+    public function deleteToken(RefreshToken $refreshToken): void;
+
+    public function deleteAllTokensFromUser(User $user): void;
 }

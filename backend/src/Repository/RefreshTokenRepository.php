@@ -1,7 +1,9 @@
 <?php
+
 namespace App\Repository;
 
 use App\Entity\RefreshToken;
+use App\Entity\User;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\Persistence\ManagerRegistry;
@@ -41,5 +43,15 @@ class RefreshTokenRepository extends ServiceEntityRepository implements RefreshT
     public function deleteToken(RefreshToken $refreshToken): void
     {
         $this->entityManager->remove($refreshToken);
+    }
+
+    public function deleteAllTokensFromUser(User $user): void
+    {
+        $this->createQueryBuilder('r')
+            ->where('r.user = :user')
+            ->delete()
+            ->setParameter('user', $user)
+            ->getQuery()
+            ->execute();
     }
 }
