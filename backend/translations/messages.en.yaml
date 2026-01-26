@@ -1,6 +1,7 @@
 exception_listener.message:
     generic: "An internal error occurred."
     validation: "Validation failed."
+    bad_request: "Invalid or missing parameters."
     jwt_encode: "Failed to encode the JWT token."
     jwt_encode_error: "An error occurred while trying to encode the JWT token."
 api.health_check:

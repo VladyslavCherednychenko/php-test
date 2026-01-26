@@ -3,13 +3,14 @@
 namespace App\EventListener;
 
 use App\Service\ApiResponseFactory;
-use Lexik\Bundle\JWTAuthenticationBundle\Exception\JWTEncodeFailureException;
 use Symfony\Component\HttpKernel\Event\ExceptionEvent;
 use Symfony\Contracts\Translation\TranslatorInterface;
-use Symfony\Component\HttpKernel\Exception\HttpExceptionInterface;
 use Symfony\Component\EventDispatcher\Attribute\AsEventListener;
+use Lexik\Bundle\JWTAuthenticationBundle\Exception\JWTEncodeFailureException;
 use Symfony\Component\HttpKernel\Exception\UnprocessableEntityHttpException;
 use Symfony\Component\Validator\Exception\ValidationFailedException;
+use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
+use Symfony\Component\HttpKernel\Exception\HttpExceptionInterface;
 
 #[AsEventListener]
 class ExceptionListener
@@ -48,6 +49,11 @@ class ExceptionListener
             $statusCode = 500;
         }
 
+        if ($this->isBadRequestHttpException($exception)) {
+            $message = $this->translator->trans('exception_listener.message.bad_request');
+            $errors = ['error' => $exception->getMessage()];
+        }
+
         if ($_ENV['APP_ENV'] === 'dev') {
             $debug = [
                 'message' => $exception->getMessage(),
@@ -71,5 +77,10 @@ class ExceptionListener
     private function isJWTEncodeFailureException(\Exception $exception): bool
     {
         return $exception instanceof JWTEncodeFailureException;
+    }
+
+    private function isBadRequestHttpException(\Exception $exception): bool
+    {
+        return $exception instanceof BadRequestHttpException;
     }
 }

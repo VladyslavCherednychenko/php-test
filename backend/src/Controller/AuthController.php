@@ -4,6 +4,7 @@ namespace App\Controller;
 
 use App\Dto\AuthDto;
 use App\Dto\UserRegistrationDto;
+use App\Entity\RefreshToken;
 use App\Entity\User;
 use App\Service\ApiResponseFactory;
 use App\Service\AuthServiceInterface;
@@ -68,15 +69,7 @@ class AuthController extends AbstractController
             context: ['groups' => 'user:read']
         );
 
-        $response->headers->setCookie(
-            Cookie::create('REFRESH_TOKEN')
-                ->withValue($refreshToken->getToken())
-                ->withExpires($refreshToken->getExpiresAt())
-                ->withHttpOnly(true)
-                ->withSecure(true)
-                ->withSameSite(Cookie::SAMESITE_STRICT)
-                ->withPath('/api/auth/token/refresh')
-        );
+        $this->setCookie($response, $refreshToken);
 
         return $response;
     }
@@ -84,16 +77,6 @@ class AuthController extends AbstractController
     #[Route('/login', name: 'login', methods: ['POST'])]
     public function login(#[MapRequestPayload] AuthDto $dto): JsonResponse
     {
-        if (! $dto) {
-            return $this->responseFactory->create(
-                $this->translator->trans('api.auth.login.access_denied'),
-                errors: [
-                    'credentials' => $this->translator->trans('api.auth.login.invalid_credentials'),
-                ],
-                statusCode: 401
-            );
-        }
-
         $user = $this->authService->getUser($dto);
 
         if (! $user) {
@@ -118,15 +101,7 @@ class AuthController extends AbstractController
             context: ['groups' => 'user:read']
         );
 
-        $response->headers->setCookie(
-            Cookie::create('REFRESH_TOKEN')
-                ->withValue($refreshToken->getToken())
-                ->withExpires($refreshToken->getExpiresAt())
-                ->withHttpOnly(true)
-                ->withSecure(true)
-                ->withSameSite(Cookie::SAMESITE_STRICT)
-                ->withPath('/api/auth/token/refresh')
-        );
+        $this->setCookie($response, $refreshToken);
 
         return $response;
     }
@@ -165,16 +140,21 @@ class AuthController extends AbstractController
             context: ['groups' => 'user:read']
         );
 
+        $this->setCookie($response, $newRefreshToken);
+
+        return $response;
+    }
+
+    private function setCookie(JsonResponse $response, RefreshToken $refreshToken): void
+    {
         $response->headers->setCookie(
             Cookie::create('REFRESH_TOKEN')
-                ->withValue($newRefreshToken->getToken())
-                ->withExpires($newRefreshToken->getExpiresAt())
+                ->withValue($refreshToken->getToken())
+                ->withExpires($refreshToken->getExpiresAt())
                 ->withHttpOnly(true)
                 ->withSecure(true)
                 ->withSameSite(Cookie::SAMESITE_STRICT)
                 ->withPath('/api/auth/token/refresh')
         );
-
-        return $response;
     }
 }
