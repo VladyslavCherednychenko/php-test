@@ -26,19 +26,18 @@ class UserController extends AbstractController
         $limit = $request->query->getInt('limit', 10);
 
         if ($page < 1 || $limit < 1) {
-            return $this->responseFactory->create(
+            return $this->responseFactory->error(
                 message: $this->translator->trans('api.users.list.validation.message'),
                 errors: [
                     'pagination' => $this->translator->trans('api.users.list.validation.errors.value'),
-                ],
-                statusCode: 400
+                ]
             );
         }
 
         $paginator = $this->userService->getUserList($page, $limit);
         $totalItems = \count($paginator);
 
-        return $this->responseFactory->create(
+        return $this->responseFactory->success(
             message: $this->translator->trans('api.users.list.result_message'),
             data: [
                 'pagination' => $paginator,
@@ -48,22 +47,22 @@ class UserController extends AbstractController
                     'pages' => ceil($totalItems / $limit),
                 ],
             ],
-            context: ['groups' => 'user:read']
+            groups: ['user:read']
         );
     }
 
-    #[Route('/{id}', name: 'find_by_id', methods: ['GET'])]
+    #[Route('/{id<\d+>}', name: 'find_by_id', methods: ['GET'])]
     public function findUserById(int $id): JsonResponse
     {
         $user = $this->userService->getUserById($id);
 
         if (! $user) {
-            return $this->responseFactory->create($this->translator->trans('api.users.find_by_id.not_found'), statusCode: 404);
+            return $this->responseFactory->error($this->translator->trans('api.users.find_by_id.not_found'), statusCode: 404);
         }
-        return $this->responseFactory->create(
-            $this->translator->trans('api.users.find_by_id.found'),
-            ['user' => $user],
-            context: ['groups' => 'user:read']
+        return $this->responseFactory->success(
+            message: $this->translator->trans('api.users.find_by_id.found'),
+            data: ['user' => $user],
+            groups: ['user:read']
         );
     }
 }

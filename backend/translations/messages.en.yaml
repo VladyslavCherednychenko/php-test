@@ -1,3 +1,6 @@
+response_factory:
+    status_success: "success"
+    status_error: "error"
 exception_listener.message:
     generic: "An internal error occurred."
     validation: "Validation failed."
@@ -40,7 +43,7 @@ api.profiles:
         validation:
             message: "Incorrect request parameters"
             username_is_empty: "Username should not be empty."
-            limit_less_than_one: "Limit should be greater than 0."
+            limit_between_1_and_10: "Limit should be greater than 0 and less than 10."
         result.message: "Profiles:"
     create_profile.message: "Profile created."
     update_profile.message: "Profile updated."

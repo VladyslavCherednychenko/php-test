@@ -26,7 +26,7 @@ class HealthCheckController extends AbstractController
             $this->translator->trans('api.health_check.db_online') :
             $this->translator->trans('api.health_check.db_offline');
 
-        return $this->responseFactory->create(
+        return $this->responseFactory->success(
             message: $this->translator->trans('api.health_check.response_message'),
             data: [
                 'status' => 'ok',

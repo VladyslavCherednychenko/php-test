@@ -27,7 +27,6 @@ class ExceptionListener
 
         $message = $this->translator->trans('exception_listener.message.generic');
         $errors = ['error' => $exception->getMessage()];
-        $debug = null;
 
         if ($this->isValidationFailedException($exception)) {
 
@@ -54,17 +53,18 @@ class ExceptionListener
             $errors = ['error' => $exception->getMessage()];
         }
 
-        if ($_ENV['APP_ENV'] === 'dev') {
-            $debug = [
-                'message' => $exception->getMessage(),
-                'file' => $exception->getFile(),
-                'line' => $exception->getLine(),
-                'trace' => $exception->getTrace(),
-            ];
-        }
+        // Instead of this I should log exceptions somewhere
+        // if ($_ENV['APP_ENV'] === 'dev') {
+        //     $debug = [
+        //         'message' => $exception->getMessage(),
+        //         'file' => $exception->getFile(),
+        //         'line' => $exception->getLine(),
+        //         'trace' => $exception->getTrace(),
+        //     ];
+        // }
 
         $event->setResponse(
-            $this->responseFactory->create($message, [], $errors, $statusCode, $debug)
+            $this->responseFactory->error($message,  $errors, $statusCode)
         );
     }
 

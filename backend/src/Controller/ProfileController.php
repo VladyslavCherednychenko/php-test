@@ -10,64 +10,61 @@ use App\Service\UserService;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpKernel\Attribute\MapQueryParameter;
 use Symfony\Component\HttpKernel\Attribute\MapRequestPayload;
 use Symfony\Component\Routing\Attribute\Route;
+use Symfony\Component\Validator\Constraints\Range;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
 #[Route('/api/profiles', name: 'api_profiles_')]
 class ProfileController extends AbstractController
 {
     public function __construct(
-        private UserProfileService $userProfileService,
-        private UserService $userService,
+        private UserProfileService $profileService,
         private ApiResponseFactory $responseFactory,
         private TranslatorInterface $translator
     ) {}
 
-    #[Route('/{id}', name: 'find_by_id', methods: ['GET'])]
+    #[Route('/{id<\d+>}', name: 'find_by_id', methods: ['GET'])]
     public function getProfileById(int $id): JsonResponse
     {
-        $profile = $this->userProfileService->getProfileById($id);
-        if ($profile == null) {
-            return $this->responseFactory->create($this->translator->trans('api.profiles.find_by_id.not_found'), statusCode: 404);
+        $profile = $this->profileService->getProfileById($id);
+        if (! $profile) {
+            return $this->responseFactory->error($this->translator->trans('api.profiles.find_by_id.not_found'), statusCode: 404);
         }
 
-        return $this->responseFactory->create(
+        return $this->responseFactory->success(
             message: $this->translator->trans('api.profiles.find_by_id.found'),
             data: ['profile' => $profile],
-            context: ['groups' => 'user:read']
+            groups: ['user:read']
         );
     }
 
-    #[Route('/', name: 'find_profiles_by_username', methods: ['GET'])]
-    public function findProfilesByUsername(Request $request): JsonResponse
-    {
-        $data = json_decode($request->getContent(), true);
-        $username = $data['username'] ?? null;
-        $limit = $data['limit'] ?? 5;
-
-        if ($username === null) {
-            return $this->responseFactory->create(
+    #[Route('/search', name: 'find_profiles_by_username', methods: ['GET'])]
+    public function findProfilesByUsername(
+        #[MapQueryParameter] string $username,
+        #[MapQueryParameter(default: 10, constraints: [new Range(min: 1, max: 10)])] int $limit = 10
+    ): JsonResponse {
+        if (! $username || $username == '') {
+            return $this->responseFactory->error(
                 $this->translator->trans('api.profiles.find_profiles_by_username.validation.message'),
-                errors: ['username' => $this->translator->trans('api.profiles.find_profiles_by_username.validation.username_is_empty')],
-                statusCode: 400
-            );
-        }
-        if ($limit < 1) {
-            return $this->responseFactory->create(
-                $this->translator->trans('api.profiles.find_profiles_by_username.validation.message'),
-                errors: ['username' => $this->translator->trans('api.profiles.find_profiles_by_username.validation.limit_less_than_one')],
-                statusCode: 400
+                errors: ['username' => $this->translator->trans('api.profiles.find_profiles_by_username.validation.username_is_empty')]
             );
         }
 
-        $profiles = $this->userProfileService->findProfilesByUsername($username, $limit);
-        return $this->responseFactory->create(
+        if ($limit < 1 || $limit > 10) {
+            return $this->responseFactory->error(
+                $this->translator->trans('api.profiles.find_profiles_by_username.validation.message'),
+                errors: ['username' => $this->translator->trans('api.profiles.find_profiles_by_username.validation.limit_between_1_and_10')]
+            );
+        }
+
+        $profiles = $this->profileService->findProfilesByUsername($username, $limit);
+
+        return $this->responseFactory->success(
             message: $this->translator->trans('api.profiles.find_profiles_by_username.result.message'),
-            data: [
-                'profiles' => $profiles,
-            ],
-            context: ['groups' => 'user:read']
+            data: ['profiles' => $profiles],
+            groups: ['user:read']
         );
     }
 
@@ -76,10 +73,11 @@ class ProfileController extends AbstractController
     {
         $result = $this->createOrUpdateProfile($profile);
 
-        return $this->responseFactory->create(
+        return $this->responseFactory->success(
             message: $this->translator->trans('api.profiles.create_profile.message'),
             data: ['profile' => $result],
-            context: ['groups' => 'user:read']
+            groups: ['user:read'],
+            statusCode: 201
         );
     }
 
@@ -88,15 +86,15 @@ class ProfileController extends AbstractController
     {
         $result = $this->createOrUpdateProfile($profile);
 
-        return $this->responseFactory->create(
+        return $this->responseFactory->success(
             message: $this->translator->trans('api.profiles.update_profile.message'),
             data: ['profile' => $result],
-            context: ['groups' => 'user:read']
+            groups: ['user:read']
         );
     }
 
     private function createOrUpdateProfile(ProfileDto $profile): UserProfile
     {
-        return $this->userProfileService->createOrUpdateProfile($profile);
+        return $this->profileService->createOrUpdateProfile($profile);
     }
 }

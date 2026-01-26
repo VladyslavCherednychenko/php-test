@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Service;
 
 use App\Dto\ProfileDto;
@@ -25,7 +26,6 @@ class UserProfileService implements UserProfileServiceInterface
 
     public function findProfilesByUsername(string $username, int $limit = 5)
     {
-        $limit = min(10, $limit);
         return $this->userProfileRepository->findProfilesByUsername($username, $limit);
     }
 

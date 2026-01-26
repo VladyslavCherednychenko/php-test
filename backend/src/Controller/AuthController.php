@@ -10,6 +10,7 @@ use App\Service\ApiResponseFactory;
 use App\Service\AuthServiceInterface;
 use App\Service\RefreshTokenServiceInterface;
 use App\Service\UserServiceInterface;
+use App\Constants\RefreshTokenConstants;
 use Lexik\Bundle\JWTAuthenticationBundle\Services\JWTTokenManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Cookie;
@@ -18,6 +19,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Attribute\MapRequestPayload;
 use Symfony\Component\ObjectMapper\ObjectMapperInterface;
 use Symfony\Component\Routing\Attribute\Route;
+use Symfony\Component\Security\Core\Exception\BadCredentialsException;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
@@ -47,82 +49,47 @@ class AuthController extends AbstractController
                 $messages[$error->getPropertyPath()] = $error->getMessage();
             }
 
-            return $this->responseFactory->create(
+            return $this->responseFactory->error(
                 message: $this->translator->trans('api.auth.register.messages.failed'),
                 errors: $messages,
                 statusCode: 400
             );
         }
 
-        $newUser = $this->userService->createUser($user);
-
-        $accessToken = $this->jwtManager->create($newUser);
-        $refreshToken = $this->refreshTokenService->createToken($newUser);
-
-        $response = $this->responseFactory->create(
-            message: $this->translator->trans('api.auth.register.messages.created'),
-            data: [
-                'access_token' => $accessToken,
-                'user' => $newUser,
-            ],
-            statusCode: 201,
-            context: ['groups' => 'user:read']
+        return $this->createAuthTokensAndResponse(
+            $this->userService->createUser($user),
+            $this->translator->trans('api.auth.register.messages.created'),
+            201
         );
-
-        $this->setCookie($response, $refreshToken);
-
-        return $response;
     }
 
     #[Route('/login', name: 'login', methods: ['POST'])]
     public function login(#[MapRequestPayload] AuthDto $dto): JsonResponse
     {
-        $user = $this->authService->getUser($dto);
+        $user = $this->authService->getUser($dto)
+            ?? throw new BadCredentialsException($this->translator->trans('api.auth.login.incorrect_credentials'));
 
-        if (! $user) {
-            return $this->responseFactory->create(
-                $this->translator->trans('api.auth.login.access_denied'),
-                errors: [
-                    'credentials' => $this->translator->trans('api.auth.login.incorrect_credentials'),
-                ],
-                statusCode: 401
-            );
-        }
-
-        $accessToken = $this->jwtManager->create($user);
-        $refreshToken = $this->refreshTokenService->createToken($user);
-
-        $response = $this->responseFactory->create(
-            message: $this->translator->trans('api.auth.login.access_granted'),
-            data: [
-                'access_token' => $accessToken,
-                'user' => $user,
-            ],
-            context: ['groups' => 'user:read']
+        return $this->createAuthTokensAndResponse(
+            $user,
+            $this->translator->trans('api.auth.login.access_granted')
         );
-
-        $this->setCookie($response, $refreshToken);
-
-        return $response;
     }
 
     #[Route('/token/refresh', name: 'token_refresh', methods: ['POST'])]
     public function refresh(Request $request): JsonResponse
     {
         $tokenString = $request->cookies->get('REFRESH_TOKEN');
-
         if (! $tokenString) {
-            return $this->responseFactory->create(
-                message: $this->translator->trans('api.auth.token_refresh.missing'),
+            return $this->responseFactory->error(
+                $this->translator->trans('api.auth.token_refresh.missing'),
                 statusCode: 401
             );
         }
 
         $refreshToken = $this->refreshTokenService->findValidToken($tokenString);
-
         if (! $refreshToken) {
-            return $this->responseFactory->create(
-                message: $this->translator->trans('api.auth.token_refresh.expired'),
+            return $this->responseFactory->error(
+                $this->translator->trans('api.auth.token_refresh.expired'),
                 statusCode: 401
             );
         }
@@ -131,30 +98,50 @@ class AuthController extends AbstractController
         $newAccessToken = $this->jwtManager->create($user);
         $newRefreshToken = $this->refreshTokenService->rotateToken($refreshToken);
 
-        $response = $this->responseFactory->create(
+        $response = $this->responseFactory->success(
             message: $this->translator->trans('api.auth.token_refresh.success'),
             data: [
                 'access_token' => $newAccessToken,
                 'user' => $user,
             ],
-            context: ['groups' => 'user:read']
+            groups: ['user:read']
         );
 
-        $this->setCookie($response, $newRefreshToken);
+        $this->attachRefreshCookie($response, $newRefreshToken);
 
         return $response;
     }
 
-    private function setCookie(JsonResponse $response, RefreshToken $refreshToken): void
+    private function createAuthTokensAndResponse(
+        User $user,
+        string $message,
+        int $status = 200
+    ): JsonResponse {
+        $accessToken = $this->jwtManager->create($user);
+        $refreshToken = $this->refreshTokenService->createToken($user);
+
+        $response = $this->responseFactory->success(
+            message: $message,
+            data: ['access_token' => $accessToken, 'user' => $user],
+            statusCode: $status,
+            groups: ['user:read']
+        );
+
+        $this->attachRefreshCookie($response, $refreshToken);
+
+        return $response;
+    }
+
+    private function attachRefreshCookie(JsonResponse $response, RefreshToken $refreshToken): void
     {
         $response->headers->setCookie(
-            Cookie::create('REFRESH_TOKEN')
+            Cookie::create(RefreshTokenConstants::COOKIE_NAME)
                 ->withValue($refreshToken->getToken())
                 ->withExpires($refreshToken->getExpiresAt())
                 ->withHttpOnly(true)
                 ->withSecure(true)
                 ->withSameSite(Cookie::SAMESITE_STRICT)
-                ->withPath('/api/auth/token/refresh')
+                ->withPath(RefreshTokenConstants::COOKIE_PATH)
         );
     }
 }
