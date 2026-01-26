@@ -53,42 +53,32 @@ class AuthController extends AbstractController
             );
         }
 
-        try {
-            $newUser = $this->userService->createUser($user);
+        $newUser = $this->userService->createUser($user);
 
-            $accessToken = $this->jwtManager->create($newUser);
-            $refreshToken = $this->refreshTokenService->createToken($newUser);
+        $accessToken = $this->jwtManager->create($newUser);
+        $refreshToken = $this->refreshTokenService->createToken($newUser);
 
-            $response = $this->responseFactory->create(
-                message: $this->translator->trans('api.auth.register.messages.created'),
-                data: [
-                    'access_token' => $accessToken,
-                    'user' => $newUser,
-                ],
-                statusCode: 201,
-                context: ['groups' => 'user:read']
-            );
+        $response = $this->responseFactory->create(
+            message: $this->translator->trans('api.auth.register.messages.created'),
+            data: [
+                'access_token' => $accessToken,
+                'user' => $newUser,
+            ],
+            statusCode: 201,
+            context: ['groups' => 'user:read']
+        );
 
-            $response->headers->setCookie(
-                Cookie::create('REFRESH_TOKEN')
-                    ->withValue($refreshToken->getToken())
-                    ->withExpires($refreshToken->getExpiresAt())
-                    ->withHttpOnly(true)
-                    ->withSecure(true)
-                    ->withSameSite(Cookie::SAMESITE_STRICT)
-                    ->withPath('/api/auth/token/refresh')
-            );
+        $response->headers->setCookie(
+            Cookie::create('REFRESH_TOKEN')
+                ->withValue($refreshToken->getToken())
+                ->withExpires($refreshToken->getExpiresAt())
+                ->withHttpOnly(true)
+                ->withSecure(true)
+                ->withSameSite(Cookie::SAMESITE_STRICT)
+                ->withPath('/api/auth/token/refresh')
+        );
 
-            return $response;
-        } catch (\Exception $e) {
-            return $this->responseFactory->create(
-                message: $this->translator->trans('api.auth.register.messages.failed'),
-                errors: [
-                    'error' => $this->translator->trans('api.auth.register.errors.generic.value'),
-                ],
-                statusCode: 409
-            );
-        }
+        return $response;
     }
 
     #[Route('/login', name: 'login', methods: ['POST'])]

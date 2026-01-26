@@ -3,6 +3,7 @@
 namespace App\EventListener;
 
 use App\Service\ApiResponseFactory;
+use Lexik\Bundle\JWTAuthenticationBundle\Exception\JWTEncodeFailureException;
 use Symfony\Component\HttpKernel\Event\ExceptionEvent;
 use Symfony\Contracts\Translation\TranslatorInterface;
 use Symfony\Component\HttpKernel\Exception\HttpExceptionInterface;
@@ -23,14 +24,11 @@ class ExceptionListener
         $exception = $event->getThrowable();
         $statusCode = ($exception instanceof HttpExceptionInterface) ? $exception->getStatusCode() : 500;
 
-        $message = $this->translator->trans('exception_listener.error_message.generic');
+        $message = $this->translator->trans('exception_listener.message.generic');
         $errors = ['error' => $exception->getMessage()];
         $debug = null;
 
-        if (
-            $exception instanceof UnprocessableEntityHttpException &&
-            $exception->getPrevious() instanceof ValidationFailedException
-        ) {
+        if ($this->isValidationFailedException($exception)) {
 
             $validationException = $exception->getPrevious();
             $violations = $validationException->getViolations();
@@ -40,8 +38,14 @@ class ExceptionListener
                 $violationsList[$violation->getPropertyPath()][] = $violation->getMessage();
             }
 
-            $message = $this->translator->trans('exception_listener.error_message.validation');
+            $message = $this->translator->trans('exception_listener.message.validation');
             $errors = $violationsList;
+        }
+
+        if ($this->isJWTEncodeFailureException($exception)) {
+            $message = $this->translator->trans('exception_listener.message.jwt_encode');
+            $errors = ['error' => $this->translator->trans('exception_listener.message.jwt_encode_error')];
+            $statusCode = 500;
         }
 
         if ($_ENV['APP_ENV'] === 'dev') {
@@ -56,5 +60,16 @@ class ExceptionListener
         $event->setResponse(
             $this->responseFactory->create($message, [], $errors, $statusCode, $debug)
         );
+    }
+
+    private function isValidationFailedException(\Exception $exception): bool
+    {
+        return $exception instanceof UnprocessableEntityHttpException &&
+            $exception->getPrevious() instanceof ValidationFailedException;
+    }
+
+    private function isJWTEncodeFailureException(\Exception $exception): bool
+    {
+        return $exception instanceof JWTEncodeFailureException;
     }
 }

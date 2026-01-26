@@ -21,14 +21,10 @@ class HealthCheckController extends AbstractController
     #[Route('', name: 'check', methods: ['GET'])]
     public function healthCheck(): JsonResponse
     {
-        $db_message = $this->translator->trans('api.health_check.db_online');
-
-        try {
-            $connection = $this->entityManager->getConnection();
-            $connection->executeQuery('SELECT 1');
-        } catch (\Exception $e) {
-            $isDbAlive = $this->translator->trans('api.health_check.db_offline');
-        }
+        $isDbconnected = $this->entityManager->getConnection()->isConnected();
+        $db_message = $isDbconnected ?
+            $this->translator->trans('api.health_check.db_online') :
+            $this->translator->trans('api.health_check.db_offline');
 
         return $this->responseFactory->create(
             message: $this->translator->trans('api.health_check.response_message'),
@@ -36,7 +32,7 @@ class HealthCheckController extends AbstractController
                 'status' => 'ok',
                 'message' => $this->translator->trans('api.health_check.success'),
                 'php_version' => PHP_VERSION,
-                'DB' => $isDbAlive,
+                'DB' => $db_message,
             ],
         );
     }

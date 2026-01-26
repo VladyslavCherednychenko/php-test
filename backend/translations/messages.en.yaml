@@ -1,6 +1,8 @@
-exception_listener.error_message:
+exception_listener.message:
     generic: "An internal error occurred."
     validation: "Validation failed."
+    jwt_encode: "Failed to encode the JWT token."
+    jwt_encode_error: "An error occurred while trying to encode the JWT token."
 api.health_check:
     success: "Symfony inside Docker is working perfectly!"
     response_message: "Health Check Info."
@@ -20,8 +22,6 @@ api.auth:
         messages:
             failed: "Registration failed."
             created: "User created."
-        errors:
-            generic: "Could not create user."
     login:
         invalid_credentials: "Invalid credentials."
         incorrect_credentials: "Email or password is incorrect."
