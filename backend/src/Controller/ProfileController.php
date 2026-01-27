@@ -1,5 +1,4 @@
 <?php
-
 namespace App\Controller;
 
 use App\Dto\ProfileDto;
@@ -11,7 +10,6 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpKernel\Attribute\MapQueryParameter;
 use Symfony\Component\HttpKernel\Attribute\MapRequestPayload;
 use Symfony\Component\Routing\Attribute\Route;
-use Symfony\Component\Validator\Constraints\Range;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
 #[Route('/api/profiles', name: 'api_profiles_')]
@@ -41,7 +39,7 @@ class ProfileController extends AbstractController
     #[Route('/search', name: 'find_profiles_by_username', methods: ['GET'])]
     public function findProfilesByUsername(
         #[MapQueryParameter] string $username,
-        #[MapQueryParameter(default: 10, constraints: [new Range(min: 1, max: 10)])] int $limit = 10
+        #[MapQueryParameter(options: [1, 10])] int $limit = 10
     ): JsonResponse {
         if (! $username || $username == '') {
             return $this->responseFactory->error(
