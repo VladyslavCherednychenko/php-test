@@ -5,12 +5,13 @@ interface HealthData {
   status: string
   message: string
   php_version: string
-  db_available: boolean
+  DB: string
 }
 
 defineProps<{
+  status: string
+  message: string
   data: HealthData | null
-  error: string | null
 }>()
 
 const emit = defineEmits(['close'])
@@ -28,16 +29,16 @@ const { t } = useI18n()
         <h4>{{ t('healthCheckResponse.header') }}</h4>
         <div class="stats">
           <p>
-            <span>{{ t('healthCheckResponse.status') }}:</span> {{ data.status }}
+            <span>{{ t('healthCheckResponse.status') }}:</span> {{ data.data.status }}
           </p>
           <p>
-            <span>{{ t('healthCheckResponse.message') }}:</span> {{ data.message }}
+            <span>{{ t('healthCheckResponse.message') }}:</span> {{ data.data.message }}
           </p>
           <p>
-            <span>{{ t('healthCheckResponse.phpVersion') }}:</span> {{ data.php_version }}
+            <span>{{ t('healthCheckResponse.phpVersion') }}:</span> {{ data.data.php_version }}
           </p>
           <p>
-            <span>{{ t('healthCheckResponse.dbStatus') }}:</span> {{ data.db_available }}
+            <span>{{ t('healthCheckResponse.dbStatus') }}:</span> {{ data.data.DB }}
           </p>
         </div>
       </div>

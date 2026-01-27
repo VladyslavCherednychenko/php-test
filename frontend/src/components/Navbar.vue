@@ -33,7 +33,7 @@ const applyTheme = (theme: string) => {
   let colorTheme = theme
 
   if (theme === 'auto') {
-    colorTheme = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light'
+    colorTheme = globalThis.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light'
   }
 
   document.documentElement.classList.toggle('dark-theme', colorTheme === 'dark')
@@ -48,7 +48,7 @@ watch(
   { immediate: true },
 )
 
-window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', () => {
+globalThis.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', () => {
   if (themeSetting.value === 'auto') applyTheme('auto')
 })
 
