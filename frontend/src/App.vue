@@ -12,6 +12,6 @@ const { t } = useI18n()
 
   <div class="main-content">
     <h1>{{ t('welcome') }}</h1>
+    <RouterView />
   </div>
-  <RouterView />
 </template>

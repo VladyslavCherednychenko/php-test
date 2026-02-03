@@ -3,6 +3,7 @@ import { ref, watch, computed } from 'vue'
 import { RouterLink } from 'vue-router'
 import { useI18n } from 'vue-i18n'
 import HealthStatus from './HealthStatus.vue'
+import { useAuthStore } from '@/stores/auth'
 
 import OsDefaultThemeIcon from './icons/IconThemeOsDefault.vue'
 import LightThemeIcon from './icons/IconThemeLight.vue'
@@ -10,8 +11,10 @@ import DarkThemeIcon from './icons/IconThemeDark.vue'
 import LanguagesIcon from './icons/IconLanguages.vue'
 import VueLogoIcon from './icons/IconVueLogo.vue'
 import SymfonyLogoIcon from './icons/IconSymfonyLogo.vue'
+import LoginIcon from './icons/IconLogin.vue'
 
 const { t, locale, availableLocales } = useI18n()
+const authStore = useAuthStore()
 
 const activeMenu = ref<string | null>(null)
 
@@ -134,10 +137,33 @@ const healthData = () => {
                 <span class="menu__tab-button-text">{{ t('links.home') }}</span>
               </RouterLink>
             </div>
+            <div v-if="authStore.isAuthenticated" class="menu__tab">
+              <RouterLink to="/profile" class="menu__tab-button">
+                <span class="menu__tab-button-text">{{ t('links.profile') }}</span>
+              </RouterLink>
+            </div>
           </nav>
         </div>
         <div class="navigation__search" data-view="desktop"></div>
-        <div class="navigation__user-menu"></div>
+        <div class="navigation__user-menu">
+          <div class="menu">
+            <template v-if="!authStore.isAuthenticated">
+              <div class="menu__tab">
+                <RouterLink to="/login" class="menu__tab-button auth-button--login">
+                  <LoginIcon class="icon-svg small" />
+                </RouterLink>
+              </div>
+            </template>
+
+            <template v-else>
+              <div class="menu__tab">
+                <button @click="authStore.logout" class="menu__tab-button">
+                  <span class="menu__tab-button-text">{{ t('actions.logout') }}</span>
+                </button>
+              </div>
+            </template>
+          </div>
+        </div>
       </div>
     </nav>
 
@@ -258,12 +284,28 @@ header {
   .navigation__user-menu {
     height: 2.125rem;
     width: 2.125rem;
+    display: flex;
+    justify-content: center;
   }
 
   .menu,
   .menu__tab-button {
     align-items: center;
     display: flex;
+  }
+
+  .menu {
+    --menu-button-padding: 0.5rem 0.7rem;
+  }
+
+  .menu__tab-button {
+    border: 1px solid #0000;
+    border-bottom-width: 1px;
+    border-bottom-style: solid;
+    border-bottom-color: rgba(0, 0, 0, 0);
+    border-bottom: none;
+    column-gap: .125rem;
+    padding: var(--menu-button-padding);
   }
 }
 
