@@ -44,7 +44,7 @@
     "login_failed": "Login failed",
     "registration_failed": "Registration failed",
     "no_account": "No account?(",
-    "already_have_an_account": "Already have an account?",
+    "already_have_an_account": "Already have an account?"
   },
   "profile": {
     "welcome": "Welcome, ",
