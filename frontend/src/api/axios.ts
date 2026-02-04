@@ -31,7 +31,7 @@ apiClient.interceptors.response.use(
       originalRequest._retry = true;
 
       try {
-        const response = await axios.post(`${BASER_URL}/token/refresh`, {}, {
+        const response = await axios.post(`${BASER_URL}/auth/token/refresh`, {}, {
           withCredentials: true
         });
 

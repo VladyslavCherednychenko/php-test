@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { ref, watch, computed } from 'vue'
-import { RouterLink } from 'vue-router'
+import { useRouter, RouterLink } from 'vue-router'
 import { useI18n } from 'vue-i18n'
 import HealthStatus from './HealthStatus.vue'
 import { useAuthStore } from '@/stores/auth'
@@ -108,6 +108,15 @@ const healthData = () => {
   backendData.value = null
   error.value = null
 }
+
+const router = useRouter();
+const searchQuery = ref('');
+
+const handleSearch = () => {
+  if (!searchQuery.value.trim()) return;
+  router.push({ path: '/', query: { q: searchQuery.value } });
+  searchQuery.value = '';
+};
 </script>
 
 <template>
@@ -144,7 +153,15 @@ const healthData = () => {
             </div>
           </nav>
         </div>
-        <div class="navigation__search" data-view="desktop"></div>
+        <div class="navigation__search" data-view="desktop">
+          <input
+            type="text"
+            v-model="searchQuery"
+            @keyup.enter="handleSearch"
+            :placeholder="t('actions.search_profiles')"
+            class="search-input"
+          />
+        </div>
         <div class="navigation__user-menu">
           <div class="menu">
             <template v-if="!authStore.isAuthenticated">
@@ -275,6 +292,7 @@ header {
 
   .navigation__search[data-view='desktop'] {
     display: block;
+    padding: var(--menu-button-padding);
   }
 
   .navigation__popup {
