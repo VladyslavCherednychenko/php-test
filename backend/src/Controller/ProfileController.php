@@ -64,7 +64,7 @@ class ProfileController extends AbstractController
         );
     }
 
-    #[Route('/', name: 'create_profile', methods: ['POST'])]
+    #[Route('', name: 'create_profile', methods: ['POST'])]
     public function createProfile(#[MapRequestPayload] ProfileDto $profile): JsonResponse
     {
         $result = $this->createOrUpdateProfile($profile);

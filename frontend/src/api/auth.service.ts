@@ -1,10 +1,11 @@
+import type { AuthCredentials } from '@/types/auth';
 import apiClient from './axios';
 
 export default {
-  login(credentials) {
+  login(credentials: AuthCredentials) {
     return apiClient.post('/auth/login', credentials);
   },
-  register(userData) {
-    return apiClient.post('/auth/register', userData);
+  register(credentials: AuthCredentials) {
+    return apiClient.post('/auth/register', credentials);
   }
 };

@@ -7,7 +7,14 @@
     "profile": "Profile"
   },
   "actions": {
-    "healthCheck": "Check connection with API"
+    "healthCheck": "Check connection with API",
+    "login": "Login",
+    "register": "Register",
+    "logout": "Logout",
+    "change_photo": "Change photo",
+    "edit_profile": "Edit profile",
+    "save": "save",
+    "cancel": "cancel"
   },
   "toggles": {
     "changeLanguage": "Change language",
@@ -31,15 +38,16 @@
     "phpVersion": "PHP version",
     "dbStatus": "DB available"
   },
-  "auth.email": "Email",
-  "auth.password": "Password",
-  "auth.login_failed": "Login failed",
-  "auth.registration_failed": "Registration failed",
-  "auth.no_account": "No account?(",
-  "auth.already_have_an_account": "Already have an account?",
-  "actions.login": "Login",
-  "actions.register": "Register",
-  "actions.logout": "Logout",
-  "profile.welcome": "Welcome, ",
-  "profile.user": "User: "
+  "auth": {
+    "email": "Email",
+    "password": "Password",
+    "login_failed": "Login failed",
+    "registration_failed": "Registration failed",
+    "no_account": "No account?(",
+    "already_have_an_account": "Already have an account?",
+  },
+  "profile": {
+    "welcome": "Welcome, ",
+    "user": "User: "
+  }
 }
