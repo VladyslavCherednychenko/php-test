@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Controller;
 
 use App\Dto\ProfileDto;
@@ -67,7 +68,7 @@ class ProfileController extends AbstractController
     #[Route('', name: 'create_profile', methods: ['POST'])]
     public function createProfile(#[MapRequestPayload] ProfileDto $profile): JsonResponse
     {
-        $result = $this->createOrUpdateProfile($profile);
+        $result = $this->profileService->createOrUpdateProfile($profile);
 
         return $this->responseFactory->success(
             message: $this->translator->trans('api.profiles.create_profile.message'),
@@ -80,17 +81,12 @@ class ProfileController extends AbstractController
     #[Route('/', name: 'update_profile', methods: ['PUT'])]
     public function UpdateProfile(#[MapRequestPayload] ProfileDto $profile): JsonResponse
     {
-        $result = $this->createOrUpdateProfile($profile);
+        $result = $this->profileService->createOrUpdateProfile($profile);
 
         return $this->responseFactory->success(
             message: $this->translator->trans('api.profiles.update_profile.message'),
             data: ['profile' => $result],
             groups: ['user:read']
         );
-    }
-
-    private function createOrUpdateProfile(ProfileDto $profile): UserProfile
-    {
-        return $this->profileService->createOrUpdateProfile($profile);
     }
 }
