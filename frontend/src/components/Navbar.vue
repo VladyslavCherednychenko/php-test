@@ -195,11 +195,13 @@ const handleSearch = () => {
       </ol>
 
       <div class="utilities__internal">
-        <button class="utilities__button" @click.stop="toggleMenu('theme')">
+        <button class="utilities__button" data-view="desktop" @click.stop="toggleMenu('theme')">
           <component :is="currentThemeIcon" class="icon-svg" />
           <span>{{ t('themes.label') }}</span>
         </button>
-
+        <button class="utilities__button" data-view="mobile" @click.stop="toggleMenu('theme')">
+          <component :is="currentThemeIcon" class="icon-svg" />
+        </button>
         <div v-if="isThemeOpen" class="utilities__dropdown">
           <ul class="utilities__list">
             <button class="utilities__option" type="button" @click="setTheme('auto')">
@@ -217,10 +219,14 @@ const handleSearch = () => {
           </ul>
         </div>
       </div>
+
       <div class="utilities__internal">
-        <button class="utilities__button" @click.stop="toggleMenu('lang')">
+        <button class="utilities__button" data-view="desktop" @click.stop="toggleMenu('lang')">
           <LanguagesIcon class="icon-svg" />
           <span>{{ t('language.name') }}</span>
+        </button>
+        <button class="utilities__button" data-view="mobile" @click.stop="toggleMenu('lang')">
+          <LanguagesIcon class="icon-svg" />
         </button>
         <div v-if="isLangOpen" class="utilities__dropdown">
           <ul class="utilities__list">
@@ -292,7 +298,15 @@ header {
 
   .navigation__search[data-view='desktop'] {
     display: block;
-    padding: var(--menu-button-padding);
+    padding: 0.5rem 0.7rem;
+  }
+
+  .navigation__search[data-view='desktop'] > .search-input {
+    background-color: var(--color-background-secondary);
+    outline: 1px solid var(--color-text-secondary);
+    color: var(--color-text-primary);
+    border-radius: 0.7rem;
+    padding: 0.3rem;
   }
 
   .navigation__popup {
@@ -318,12 +332,16 @@ header {
 
   .menu__tab-button {
     border: 1px solid #0000;
-    border-bottom-width: 1px;
-    border-bottom-style: solid;
-    border-bottom-color: rgba(0, 0, 0, 0);
-    border-bottom: none;
     column-gap: 0.125rem;
     padding: var(--menu-button-padding);
+  }
+
+  .utilities__button[data-view='mobile'] {
+    display: none;
+  }
+
+  .utilities__button[data-view='desktop'] {
+    display: block;
   }
 }
 
@@ -380,6 +398,20 @@ header {
     display: flex;
     padding: var(--menu-button-padding);
   }
+
+  .utilities-bar,
+  .utilities__external {
+    padding-inline: 0;
+    padding: 0;
+  }
+
+  .utilities__button[data-view='mobile'] {
+    display: block;
+  }
+
+  .utilities__button[data-view='desktop'] {
+    display: none;
+  }
 }
 
 .menu__tab {
@@ -409,11 +441,9 @@ header {
 .utilities-bar {
   align-items: center;
   background-color: var(--color-background-primary);
-  border-width: 1px;
-  border-bottom: 1px solid var(--color-border-primary);
-  border-left: 0 solid var(--color-border-primary);
-  border-right: 0 solid var(--color-border-primary);
-  border-top: 1px solid var(--color-border-primary);
+  border: 1px solid var(--color-border-primary);
+  border-left: none;
+  border-right: none;
   column-gap: 1rem;
   display: flex;
   height: var(--utilities-bar-height);
@@ -430,8 +460,13 @@ header {
   list-style: none;
   margin: 0 auto 0 0;
   min-width: 0;
-  overflow-x: hidden;
-  padding: 2px;
+  height: 100%;
+  /* overflow-x: hidden;
+  padding: 2px; */
+}
+
+.utilities__external > li {
+  height: 100%;
 }
 
 .utilities__internal {
@@ -455,6 +490,7 @@ header {
 
 .utilities__button:is(:hover, :focus, [aria-expanded='true']) {
   background-color: var(--color-background-secondary);
+  outline: 1px solid var(--color-text-primary);
 }
 
 .utilities li {
@@ -463,7 +499,7 @@ header {
 }
 
 .utilities__dropdown {
-  border: 1px solid var(--color-border-primary);
+  outline: 1px solid var(--color-border-primary);
   padding: 0.75rem;
   position: absolute;
   right: 0;
@@ -494,5 +530,9 @@ header {
   margin: 0;
   padding: 0.25rem;
   width: 100%;
+}
+
+.utilities__option:hover {
+  outline: 1px solid var(--color-text-primary);
 }
 </style>

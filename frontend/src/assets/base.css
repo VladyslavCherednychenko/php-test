@@ -74,10 +74,8 @@
   /* radius */
   --radius-normal: 0.25rem;
   --radius-full: 9999px;
-}
 
-/* [LIGHT THEME: COLOR VARIABLES] */
-:root {
+  /* [LIGHT THEME: COLOR VARIABLES] */
   --color-background-page: var(--color-white);
   --color-background-primary: var(--color-gray-90);
   --color-background-secondary: var(--color-gray-90);

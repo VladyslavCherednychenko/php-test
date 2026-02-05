@@ -40,6 +40,28 @@ h1 {
   margin-right: 8px;
 }
 
+.btn-outline {
+  margin: 0.25rem 0.125rem;
+  color: var(--color-gray-60);
+  outline: 1px solid var(--color-gray-60);
+  background-color: #0000;
+  text-align: center;
+  text-decoration: none;
+  vertical-align: middle;
+  cursor: pointer;
+  border-radius: 0.375rem;
+  padding: 0.375rem 0.75rem;
+  line-height: 1.6;
+  font-weight: normal;
+  box-sizing: border-box;
+  font-size: var(--font-size-normal);
+}
+
+.btn-outline:hover {
+  background-color: var(--color-gray-40);
+  color: var(--color-white);
+}
+
 @media (hover: hover) {
   a:hover {
     color: var(--color-link-text-hover);

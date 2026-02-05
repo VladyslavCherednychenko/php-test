@@ -15,7 +15,7 @@
     "edit_profile": "Edit profile",
     "save": "save",
     "cancel": "cancel",
-    "search_profiles": "Seatch profiles"
+    "search_profiles": "Search profiles"
   },
   "toggles": {
     "changeLanguage": "Change language",
@@ -48,8 +48,12 @@
     "already_have_an_account": "Already have an account?"
   },
   "profile": {
-    "welcome": "Welcome, ",
-    "user": "User: "
+    "welcome": "Welcome,",
+    "user": "User:",
+    "username": "Username:",
+    "firstname": "Firstname:",
+    "lastname": "Lastname:",
+    "bio": "Bio:"
   },
   "search": {
     "searching": "Searching...",

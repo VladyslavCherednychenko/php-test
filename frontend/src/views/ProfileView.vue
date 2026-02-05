@@ -55,46 +55,76 @@ async function onFileChange(event: Event) {
 </script>
 
 <template>
-  <div class="profile-page">
-    <div v-if="authStore.user">
-      <div class="profile-header">
-        <div class="avatar-container">
+  <div class="profile-page" v-if="authStore.user">
+    <div class="profile-box">
+      <div class="avatar-container">
+        <div class="avatar-wrapper">
           <img :src="authStore.user.profile?.profileImage || '/default-avatar.png'" class="avatar" />
-          <input type="file" @change="onFileChange" accept="image/*" id="file-input" hidden />
-          <label for="file-input" class="upload-label">{{ t('actions.change_photo') }}</label>
         </div>
+        <input type="file" @change="onFileChange" accept="image/*" id="file-input" hidden />
+        <label for="file-input" class="btn-outline">{{ t('actions.change_photo') }}</label>
       </div>
-
-      <div v-if="isEditing">
-        <form @submit.prevent="handleUpdate" class="profile-form">
-          <input v-model="form.username" :placeholder="t('profile.username')" required />
-          <input v-model="form.firstName" :placeholder="t('profile.firstName')" />
-          <input v-model="form.lastName" :placeholder="t('profile.lastName')" />
-          <textarea v-model="form.bio" :placeholder="t('profile.bio')"></textarea>
+      <p v-if="error" class="error">{{ error }}</p>
+      <div v-if="isEditing" class="profile-info">
+        <form @submit.prevent="handleUpdate" class="profile-info">
+          <label>
+            {{ t('profile.username') }}
+            <input v-model="form.username" :placeholder="t('profile.username')" required />
+          </label>
+          <label>
+            {{ t('profile.firstname') }}
+            <input v-model="form.firstName" :placeholder="t('profile.firstName')" />
+          </label>
+          <label>
+            {{ t('profile.lastname') }}
+            <input v-model="form.lastName" :placeholder="t('profile.lastName')" />
+          </label>
+          <label>
+            {{ t('profile.bio') }}
+            <textarea v-model="form.bio" :placeholder="t('profile.bio')"></textarea>
+          </label>
 
           <div class="actions">
-            <button type="submit" :disabled="isLoading">{{ t('actions.save') }}</button>
-            <button type="button" @click="isEditing = false">{{ t('actions.cancel') }}</button>
+            <button class="btn-outline" type="submit" :disabled="isLoading">{{ t('actions.save') }}</button>
+            <button class="btn-outline" type="button" @click="isEditing = false">{{ t('actions.cancel') }}</button>
           </div>
         </form>
       </div>
 
       <div v-else class="profile-info">
-        <h2>{{ authStore.user.profile?.username || t('profile.no_username') }}</h2>
-        <p>{{ authStore.user.profile?.firstName }} {{ authStore.user.profile?.lastName }}</p>
-        <p class="bio">{{ authStore.user.profile?.bio }}</p>
-        <button @click="isEditing = true">{{ t('actions.edit_profile') }}</button>
+        <label>
+          {{ t('profile.username') }}
+          <input readonly v-model="form.username" :placeholder="t('profile.username')" required />
+        </label>
+        <label>
+          {{ t('profile.firstname') }}
+          <input readonly v-model="form.firstName" :placeholder="t('profile.firstName')" />
+        </label>
+        <label>
+          {{ t('profile.lastname') }}
+          <input readonly v-model="form.lastName" :placeholder="t('profile.lastName')" />
+        </label>
+        <label>
+          {{ t('profile.bio') }}
+          <textarea readonly v-model="form.bio" :placeholder="t('profile.bio')"></textarea>
+        </label>
+        <button class="btn-outline" @click="isEditing = true">{{ t('actions.edit_profile') }}</button>
       </div>
-
-      <p v-if="error" class="error">{{ error }}</p>
     </div>
   </div>
 </template>
 
 <style scoped>
+.profile-box {
+  display: flex;
+  gap: 2rem;
+  justify-content: center;
+  width: 100%;
+}
+
 .avatar {
-  width: 120px;
-  height: 120px;
+  width: 240px;
+  height: 240px;
   border-radius: 50%;
   object-fit: cover;
 }
@@ -108,9 +138,77 @@ async function onFileChange(event: Event) {
   color: var(--color-text-danger);
   margin-top: 10px;
 }
-.upload-label {
-  cursor: pointer;
-  color: var(--color-text-blue);
-  font-size: 0.8rem;
+
+.profile-page {
+  min-height: calc(100dvh - (var(--navigation-height) + var(--utilities-bar-height)));
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding-bottom: 5rem;
+  gap: 2rem;
+}
+
+.avatar-container,
+.profile-info {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 0.75rem;
+  width: 33dvw;
+}
+
+.avatar-wrapper {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.info-item {
+  display: flex;
+}
+
+button {
+  border: none;
+}
+
+.profile-info > label > input,
+.profile-info > label > textarea {
+  background-color: var(--color-background-secondary);
+  outline: 1px solid var(--color-text-secondary);
+  color: var(--color-text-primary);
+  padding: 0.3rem;
+}
+
+.profile-info > label {
+  display: flex;
+  flex-direction: column;
+  font-weight: var(--font-weight-bold);
+}
+
+.avatar-container > .btn-outline {
+  align-self: center;
+}
+
+.actions {
+  display: flex;
+  gap: 1rem;
+}
+
+.actions > .btn-outline {
+  width: 100%;
+}
+
+@media (width <= 768px) {
+  .profile-box {
+    flex-direction: column;
+    align-content: center;
+    margin-top: 2rem;
+  }
+
+  .avatar-container,
+  .profile-info {
+    width: 100%;
+  }
 }
 </style>
