@@ -40,12 +40,14 @@ watch(
       <p v-if="isLoading">{{ t('search.searching') }}</p>
 
       <ul v-else-if="results.length" class="results-box">
-        <li v-for="user in results" :key="user.id" class="user-card">
-          <RouterLink :to="`/profiles/${user.id}`">
+        <li v-for="user in results" :key="user.id" class="user-card-wrapper">
+          <RouterLink class="user-card" :to="`/profiles/${user.id}`">
             <img :src="user.profileImage || '/default-avatar.png'" />
+            <div class="user-fields">
+              <strong>{{ user.username }}</strong>
+              <span>{{ user.firstName }} {{ user.lastName }}</span>
+            </div>
           </RouterLink>
-          <strong>{{ user.username }}</strong>
-          <span>{{ user.firstName }} {{ user.lastName }}</span>
         </li>
       </ul>
 
@@ -61,12 +63,38 @@ watch(
 <style lang="css" scoped>
 .results-box {
   display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+  padding: 2rem;
+}
+
+.user-card-wrapper {
+  list-style: none;
+  flex: 1 0 calc(33.333% - 1rem);
+}
+
+.user-card-wrapper:hover {
+  outline: 1px solid var(--color-text-primary);
 }
 
 .user-card {
   display: flex;
-  flex-direction: column;
-  align-items: center;
+  align-items: start;
   padding: 0.5rem 0.7rem;
+  text-decoration: none;
+}
+
+.user-fields {
+  display: flex;
+  flex-direction: column;
+  margin-left: 1rem;
+}
+
+.search-results {
+  margin-top: 2rem;
+}
+
+h2 {
+  text-align: center;
 }
 </style>
