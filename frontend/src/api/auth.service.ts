@@ -7,5 +7,5 @@ export default {
   },
   register(credentials: AuthCredentials) {
     return apiClient.post('/auth/register', credentials);
-  }
+  },
 };

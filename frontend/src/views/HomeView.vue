@@ -2,9 +2,9 @@
 import { ref, watch, onMounted } from 'vue';
 import { useRoute } from 'vue-router';
 import profileService from '@/api/profile.service';
-import { useI18n } from 'vue-i18n'
+import { useI18n } from 'vue-i18n';
 
-const { t } = useI18n()
+const { t } = useI18n();
 const route = useRoute();
 const results = ref([]);
 const isLoading = ref(false);
@@ -17,15 +17,19 @@ const performSearch = async (username: string) => {
     const response = await profileService.searchProfile(username);
     results.value = response.data.data.profiles;
   } catch (err) {
-    console.error("Search failed", err);
+    console.error('Search failed', err);
   } finally {
     isLoading.value = false;
   }
 };
 
-watch(() => route.query.q, (newQuery) => {
-  performSearch(newQuery as string);
-}, { immediate: true });
+watch(
+  () => route.query.q,
+  (newQuery) => {
+    performSearch(newQuery as string);
+  },
+  { immediate: true },
+);
 </script>
 
 <template>
@@ -38,7 +42,7 @@ watch(() => route.query.q, (newQuery) => {
       <ul v-else-if="results.length" class="results-box">
         <li v-for="user in results" :key="user.id" class="user-card">
           <RouterLink :to="`/profiles/${user.id}`">
-            <img :src="user.profileImage || '/default-avatar.png'"/>
+            <img :src="user.profileImage || '/default-avatar.png'" />
           </RouterLink>
           <strong>{{ user.username }}</strong>
           <span>{{ user.firstName }} {{ user.lastName }}</span>

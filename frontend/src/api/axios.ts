@@ -1,7 +1,7 @@
 import axios from 'axios';
 import { useAuthStore } from '@/stores/auth';
 
-const BASER_URL = import.meta.env.API_URL || 'http://localhost:8080/api'
+const BASER_URL = import.meta.env.API_URL || 'http://localhost:8080/api';
 
 const apiClient = axios.create({
   baseURL: BASER_URL,
@@ -31,9 +31,13 @@ apiClient.interceptors.response.use(
       originalRequest._retry = true;
 
       try {
-        const response = await axios.post(`${BASER_URL}/auth/token/refresh`, {}, {
-          withCredentials: true
-        });
+        const response = await axios.post(
+          `${BASER_URL}/auth/token/refresh`,
+          {},
+          {
+            withCredentials: true,
+          },
+        );
 
         const { access_token, user } = response.data.data;
 
@@ -51,7 +55,7 @@ apiClient.interceptors.response.use(
     }
 
     return Promise.reject(error);
-  }
+  },
 );
 
 export default apiClient;

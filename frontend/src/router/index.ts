@@ -1,5 +1,5 @@
-import { createRouter, createWebHistory } from 'vue-router'
-import HomeView from '@/views/HomeView.vue'
+import { createRouter, createWebHistory } from 'vue-router';
+import HomeView from '@/views/HomeView.vue';
 import { useAuthStore } from '@/stores/auth';
 
 const router = createRouter({
@@ -34,7 +34,7 @@ const router = createRouter({
       meta: { requiresAuth: true },
     },
   ],
-})
+});
 
 router.beforeEach((to, from, next) => {
   const authStore = useAuthStore();
@@ -52,4 +52,4 @@ router.beforeEach((to, from, next) => {
   next();
 });
 
-export default router
+export default router;

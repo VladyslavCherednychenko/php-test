@@ -16,7 +16,7 @@ const form = reactive({
   username: authStore.user?.profile?.username || '',
   firstName: authStore.user?.profile?.firstName || '',
   lastName: authStore.user?.profile?.lastName || '',
-  bio: authStore.user?.profile?.bio || ''
+  bio: authStore.user?.profile?.bio || '',
 });
 
 // --- Handle Text Data ---
@@ -57,7 +57,6 @@ async function onFileChange(event: Event) {
 <template>
   <div class="profile-page">
     <div v-if="authStore.user">
-
       <div class="profile-header">
         <div class="avatar-container">
           <img :src="authStore.user.profile?.profileImage || '/default-avatar.png'" class="avatar" />
@@ -93,8 +92,25 @@ async function onFileChange(event: Event) {
 </template>
 
 <style scoped>
-.avatar { width: 120px; height: 120px; border-radius: 50%; object-fit: cover; }
-.profile-form { display: flex; flex-direction: column; gap: 10px; max-width: 300px; }
-.error { color: var(--color-text-danger); margin-top: 10px; }
-.upload-label { cursor: pointer; color: var(--color-text-blue); font-size: 0.8rem; }
+.avatar {
+  width: 120px;
+  height: 120px;
+  border-radius: 50%;
+  object-fit: cover;
+}
+.profile-form {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  max-width: 300px;
+}
+.error {
+  color: var(--color-text-danger);
+  margin-top: 10px;
+}
+.upload-label {
+  cursor: pointer;
+  color: var(--color-text-blue);
+  font-size: 0.8rem;
+}
 </style>

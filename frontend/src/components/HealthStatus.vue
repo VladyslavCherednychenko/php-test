@@ -1,21 +1,21 @@
 <script setup lang="ts">
-import { useI18n } from 'vue-i18n'
+import { useI18n } from 'vue-i18n';
 
 interface HealthData {
-  status: string
-  message: string
-  php_version: string
-  DB: string
+  status: string;
+  message: string;
+  php_version: string;
+  DB: string;
 }
 
 defineProps<{
-  status: string
-  message: string
-  data: HealthData | null
-}>()
+  status: string;
+  message: string;
+  data: HealthData | null;
+}>();
 
-const emit = defineEmits(['close'])
-const { t } = useI18n()
+const emit = defineEmits(['close']);
+const { t } = useI18n();
 </script>
 
 <template>

@@ -10,11 +10,11 @@ export default {
   searchProfile(username: string) {
     return apiClient.get('/profiles/search', {
       params: {
-        username: username
-      }
-    })
+        username: username,
+      },
+    });
   },
   getProfileById(id: number | string) {
     return apiClient.get(`/profiles/${id}`);
-  }
+  },
 };

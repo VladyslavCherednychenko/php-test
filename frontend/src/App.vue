@@ -1,14 +1,13 @@
 <script setup lang="ts">
-import { RouterView } from 'vue-router'
-import { useI18n } from 'vue-i18n'
-import Navbar from './components/Navbar.vue'
+import { RouterView } from 'vue-router';
+import { useI18n } from 'vue-i18n';
+import Navbar from './components/Navbar.vue';
 
-const { t } = useI18n()
-
+const { t } = useI18n();
 </script>
 
 <template>
-  <Navbar/>
+  <Navbar />
 
   <div class="main-content">
     <h1>{{ t('welcome') }}</h1>

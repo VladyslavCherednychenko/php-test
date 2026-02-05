@@ -1,113 +1,113 @@
 <script setup lang="ts">
-import { ref, watch, computed } from 'vue'
-import { useRouter, RouterLink } from 'vue-router'
-import { useI18n } from 'vue-i18n'
-import HealthStatus from './HealthStatus.vue'
-import { useAuthStore } from '@/stores/auth'
+import { ref, watch, computed } from 'vue';
+import { useRouter, RouterLink } from 'vue-router';
+import { useI18n } from 'vue-i18n';
+import HealthStatus from './HealthStatus.vue';
+import { useAuthStore } from '@/stores/auth';
 
-import OsDefaultThemeIcon from './icons/IconThemeOsDefault.vue'
-import LightThemeIcon from './icons/IconThemeLight.vue'
-import DarkThemeIcon from './icons/IconThemeDark.vue'
-import LanguagesIcon from './icons/IconLanguages.vue'
-import VueLogoIcon from './icons/IconVueLogo.vue'
-import SymfonyLogoIcon from './icons/IconSymfonyLogo.vue'
-import LoginIcon from './icons/IconLogin.vue'
+import OsDefaultThemeIcon from './icons/IconThemeOsDefault.vue';
+import LightThemeIcon from './icons/IconThemeLight.vue';
+import DarkThemeIcon from './icons/IconThemeDark.vue';
+import LanguagesIcon from './icons/IconLanguages.vue';
+import VueLogoIcon from './icons/IconVueLogo.vue';
+import SymfonyLogoIcon from './icons/IconSymfonyLogo.vue';
+import LoginIcon from './icons/IconLogin.vue';
 
-const { t, locale, availableLocales } = useI18n()
-const authStore = useAuthStore()
+const { t, locale, availableLocales } = useI18n();
+const authStore = useAuthStore();
 
-const activeMenu = ref<string | null>(null)
+const activeMenu = ref<string | null>(null);
 
 const toggleMenu = (menuName: string) => {
   if (activeMenu.value === menuName) {
-    activeMenu.value = null
+    activeMenu.value = null;
   } else {
-    activeMenu.value = menuName
+    activeMenu.value = menuName;
   }
-}
+};
 
-const isLangOpen = computed(() => activeMenu.value === 'lang')
-const isThemeOpen = computed(() => activeMenu.value === 'theme')
+const isLangOpen = computed(() => activeMenu.value === 'lang');
+const isThemeOpen = computed(() => activeMenu.value === 'theme');
 
 // --- THEME LOGIC ---
-const themeSetting = ref(localStorage.getItem('user-theme') || 'auto')
+const themeSetting = ref(localStorage.getItem('user-theme') || 'auto');
 
 const applyTheme = (theme: string) => {
-  let colorTheme = theme
+  let colorTheme = theme;
 
   if (theme === 'auto') {
-    colorTheme = globalThis.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light'
+    colorTheme = globalThis.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
   }
 
-  document.documentElement.classList.toggle('dark-theme', colorTheme === 'dark')
-}
+  document.documentElement.classList.toggle('dark-theme', colorTheme === 'dark');
+};
 
 watch(
   themeSetting,
   (newTheme) => {
-    localStorage.setItem('user-theme', newTheme)
-    applyTheme(newTheme)
+    localStorage.setItem('user-theme', newTheme);
+    applyTheme(newTheme);
   },
   { immediate: true },
-)
+);
 
 globalThis.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', () => {
-  if (themeSetting.value === 'auto') applyTheme('auto')
-})
+  if (themeSetting.value === 'auto') applyTheme('auto');
+});
 
 const setTheme = (theme: 'light' | 'dark' | 'auto') => {
-  themeSetting.value = theme
-  isThemeOpen.value = false
-}
+  themeSetting.value = theme;
+  isThemeOpen.value = false;
+};
 
 const currentThemeIcon = computed(() => {
-  if (themeSetting.value === 'dark') return DarkThemeIcon
-  if (themeSetting.value === 'light') return LightThemeIcon
-  return OsDefaultThemeIcon
-})
+  if (themeSetting.value === 'dark') return DarkThemeIcon;
+  if (themeSetting.value === 'light') return LightThemeIcon;
+  return OsDefaultThemeIcon;
+});
 
 // --- LANGUAGE LOGIC ---
 watch(locale, (newLang) => {
-  localStorage.setItem('user-locale', newLang)
-  document.querySelector('html')?.setAttribute('lang', newLang)
-})
+  localStorage.setItem('user-locale', newLang);
+  document.querySelector('html')?.setAttribute('lang', newLang);
+});
 
 const selectLanguage = (lang: string) => {
-  locale.value = lang
-  isLangOpen.value = false
-}
+  locale.value = lang;
+  isLangOpen.value = false;
+};
 
 // --- API LOGIC ---
-const backendData = ref(null)
-const error = ref(null)
-const isLoading = ref(false)
+const backendData = ref(null);
+const error = ref(null);
+const isLoading = ref(false);
 
 async function fetchData() {
-  isLoading.value = true
-  error.value = null
+  isLoading.value = true;
+  error.value = null;
 
   try {
     const response = await fetch('http://localhost:8080/api/health', {
       headers: { 'Accept-Language': locale.value },
-    })
-    backendData.value = await response.json()
+    });
+    backendData.value = await response.json();
   } catch (err) {
-    error.value = err instanceof Error ? err.message : 'Error'
+    error.value = err instanceof Error ? err.message : 'Error';
   } finally {
-    isLoading.value = false
+    isLoading.value = false;
   }
 }
 
 window.addEventListener('click', (e) => {
   if (!(e.target as Element).closest('.custom-select-container')) {
-    activeMenu.value = null
+    activeMenu.value = null;
   }
-})
+});
 
 const healthData = () => {
-  backendData.value = null
-  error.value = null
-}
+  backendData.value = null;
+  error.value = null;
+};
 
 const router = useRouter();
 const searchQuery = ref('');
@@ -322,7 +322,7 @@ header {
     border-bottom-style: solid;
     border-bottom-color: rgba(0, 0, 0, 0);
     border-bottom: none;
-    column-gap: .125rem;
+    column-gap: 0.125rem;
     padding: var(--menu-button-padding);
   }
 }

@@ -1,11 +1,11 @@
 <script setup lang="ts">
 import { ref } from 'vue';
-import { useI18n } from 'vue-i18n'
+import { useI18n } from 'vue-i18n';
 import { useAuthStore } from '@/stores/auth';
 import { useRouter } from 'vue-router';
 import type { AuthCredentials } from '@/types/auth';
 
-const { t } = useI18n()
+const { t } = useI18n();
 
 const router = useRouter();
 const authStore = useAuthStore();
