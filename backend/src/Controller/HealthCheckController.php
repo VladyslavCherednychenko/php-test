@@ -21,8 +21,14 @@ class HealthCheckController extends AbstractController
     #[Route('', name: 'check', methods: ['GET'])]
     public function healthCheck(): JsonResponse
     {
-        $isDbconnected = $this->entityManager->getConnection()->isConnected();
-        $db_message = $isDbconnected ?
+        try {
+            $this->entityManager->getConnection()->executeQuery('SELECT 1');
+            $isDbConnected = true;
+        } catch (\Throwable $e) {
+            $isDbConnected = false;
+        }
+
+        $db_message = $isDbConnected ?
             $this->translator->trans('api.health_check.db_online') :
             $this->translator->trans('api.health_check.db_offline');
 
