@@ -7,4 +7,4 @@ To start the project run:
 docker compose up -d --build
 ```
 
-* Project is in development, some functions are to be implemented
+\* Project is in development, some functions are to be implemented
