@@ -97,11 +97,20 @@ class ProfileController extends AbstractController
     {
         $file = $request->files->get('file');
         if (!$file) {
-            return new JsonResponse(['error' => 'no file'], 400);
+
+            return $this->responseFactory->error(
+                $this->translator->trans('api.profiles.picture.no_file.message'),
+                errors: ['error' => $this->translator->trans('api.profiles.picture.no_file')],
+                statusCode: 400
+            );
         }
 
         $path = $this->imageStorageService->saveImage($file);
 
-        return new JsonResponse(['path' => $path], 201);
+        return $this->responseFactory->success(
+            message: $this->translator->trans('api.profiles.upload_profile_picture.message'),
+            data: ['path' => $path],
+            statusCode: 201
+        );
     }
 }
