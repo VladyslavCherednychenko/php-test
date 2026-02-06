@@ -1,20 +1,27 @@
 FROM php:8.4-fpm-alpine
 
 RUN apk add --no-cache \
-    libpq-dev \
-    icu-dev \
-    git \
-    unzip \
+        libpq-dev \
+        icu-dev \
+        git \
+        unzip \
+        freetype-dev \
+        libjpeg-turbo-dev \
+        libpng-dev \
+    && docker-php-ext-configure gd \
+        --with-freetype \
+        --with-jpeg \
     && docker-php-ext-install \
-    pdo \
-    pdo_pgsql \
-    intl \
-    opcache \
+        pdo \
+        pdo_pgsql \
+        intl \
+        opcache \
+        gd \
     && apk add --no-cache --virtual .build-deps \
-    autoconf \
-    g++ \
-    make \
-    linux-headers \
+        autoconf \
+        g++ \
+        make \
+        linux-headers \
     && pecl install xdebug \
     && docker-php-ext-enable xdebug \
     && apk del .build-deps
