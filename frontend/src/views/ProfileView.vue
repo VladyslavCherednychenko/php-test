@@ -40,7 +40,7 @@ async function onFileChange(event: Event) {
   if (!target.files?.length) return;
 
   const formData = new FormData();
-  formData.append('picture', target.files[0]);
+  formData.append('file', target.files[0]);
 
   try {
     isLoading.value = true;
