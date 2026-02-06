@@ -3,11 +3,12 @@
 namespace App\Controller;
 
 use App\Dto\ProfileDto;
-use App\Entity\UserProfile;
 use App\Service\ApiResponseFactory;
-use App\Service\UserProfileService;
+use App\Service\ImageStorageServiceInterface;
+use App\Service\UserProfileServiceInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Attribute\MapQueryParameter;
 use Symfony\Component\HttpKernel\Attribute\MapRequestPayload;
 use Symfony\Component\Routing\Attribute\Route;
@@ -17,7 +18,8 @@ use Symfony\Contracts\Translation\TranslatorInterface;
 class ProfileController extends AbstractController
 {
     public function __construct(
-        private UserProfileService $profileService,
+        private UserProfileServiceInterface $profileService,
+        private ImageStorageServiceInterface $imageStorageService,
         private ApiResponseFactory $responseFactory,
         private TranslatorInterface $translator
     ) {}
@@ -79,7 +81,7 @@ class ProfileController extends AbstractController
     }
 
     #[Route('/', name: 'update_profile', methods: ['PUT'])]
-    public function UpdateProfile(#[MapRequestPayload] ProfileDto $profile): JsonResponse
+    public function updateProfile(#[MapRequestPayload] ProfileDto $profile): JsonResponse
     {
         $result = $this->profileService->createOrUpdateProfile($profile);
 
@@ -88,5 +90,18 @@ class ProfileController extends AbstractController
             data: ['profile' => $result],
             groups: ['user:read']
         );
+    }
+
+    #[Route('/picture', name: 'upload_profile_picture', methods: ['POST'])]
+    public function uploadProfilePicture(Request $request): JsonResponse
+    {
+        $file = $request->files->get('file');
+        if (!$file) {
+            return new JsonResponse(['error' => 'no file'], 400);
+        }
+
+        $path = $this->imageStorageService->saveImage($file);
+
+        return new JsonResponse(['path' => $path], 201);
     }
 }

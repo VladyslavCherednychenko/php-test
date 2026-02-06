@@ -7,6 +7,7 @@
 # Put parameters here that don't need to change on each machine where the app is deployed
 # https://symfony.com/doc/current/best_practices.html#use-parameters-for-application-configuration
 parameters:
+    image_storage_root: "%kernel.project_dir%/public/images"
 
 services:
     # default configuration for services in *this* file
@@ -22,4 +23,15 @@ services:
     # add more service definitions when explicit configuration is needed
     # please note that last definitions always *replace* previous ones
     App\Repository\UserRepositoryInterface: '@App\Repository\UserRepository'
+    App\Repository\RefreshTokenRepositoryInterface: '@App\Repository\RefreshTokenRepository'
+    App\Repository\UserProfileRepositoryInterface: '@App\Repository\UserProfileRepository'
     App\Repository\UserServiceInterface: '@App\Repository\UserService'
+    App\Repository\AuthServiceInterface: '@App\Repository\AuthService'
+    App\Repository\ImageStorageServiceInterface: '@App\Repository\ImageStorageService'
+    App\Repository\RefreshTokenCookieServiceInterface: '@App\Repository\RefreshTokenCookieService'
+    App\Repository\RefreshTokenServiceInterface: '@App\Repository\RefreshTokenService'
+    App\Repository\UserProfileServiceInterface: '@App\Repository\UserProfileService'
+
+    App\Service\ImageStorageService:
+        arguments:
+            $storageRoot: "%image_storage_root%"
