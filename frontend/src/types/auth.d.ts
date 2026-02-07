@@ -1,19 +1,3 @@
-export interface UserProfile {
-  id: number;
-  username: string;
-  firstName: string;
-  lastName: string;
-  profileImage: string | null;
-  bio: string;
-}
-
-export interface User {
-  id: number;
-  email: string;
-  role: number;
-  profile: UserProfile | null;
-}
-
 export interface AuthResponse {
   status: string;
   message: string;

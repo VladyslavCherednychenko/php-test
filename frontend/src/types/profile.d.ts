@@ -1,13 +1,8 @@
-export interface CreateOrUpdateProfileDto {
+export interface UserProfile {
+  id: number;
   username: string;
   firstName: string;
   lastName: string;
-  bio: string;
-}
-
-export interface ChangeProfilePictureDto {
-  username: string;
-  firstName: string;
-  lastName: string;
+  profileImage: string | null;
   bio: string;
 }
