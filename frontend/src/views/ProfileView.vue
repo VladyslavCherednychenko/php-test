@@ -1,11 +1,10 @@
 <script setup lang="ts">
 import { ref, reactive } from 'vue';
 import { useI18n } from 'vue-i18n';
-import { useAuthStore } from '@/stores/auth';
-import profileService from '@/api/profile.service';
+import { useUserStore } from '@/stores/user';
 
 const { t } = useI18n();
-const authStore = useAuthStore();
+const userStore = useUserStore();
 
 const isEditing = ref(false);
 const isLoading = ref(false);
@@ -13,10 +12,10 @@ const error = ref('');
 
 // Reactive form state
 const form = reactive({
-  username: authStore.user?.profile?.username || '',
-  firstName: authStore.user?.profile?.firstName || '',
-  lastName: authStore.user?.profile?.lastName || '',
-  bio: authStore.user?.profile?.bio || '',
+  username: userStore.user?.profile?.username || '',
+  firstName: userStore.user?.profile?.firstName || '',
+  lastName: userStore.user?.profile?.lastName || '',
+  bio: userStore.user?.profile?.bio || '',
 });
 
 // --- Handle Text Data ---
@@ -24,8 +23,7 @@ async function handleUpdate() {
   isLoading.value = true;
   error.value = '';
   try {
-    const response = await profileService.createOrUpdateProfile(form);
-    authStore.user.profile = response.data.data.profile;
+    await userStore.updateProfileContent(form);
     isEditing.value = false;
   } catch (err: any) {
     error.value = err.response?.data?.errors || 'Update failed';
@@ -44,8 +42,7 @@ async function onFileChange(event: Event) {
 
   try {
     isLoading.value = true;
-    const response = await profileService.changeProfilePicture(formData);
-    authStore.user.profile.profileImage = response.data.data.profile.profileImage;
+    await userStore.updateProfileImage(formData);
   } catch (err: any) {
     error.value = t('errors.upload_failed');
   } finally {
@@ -55,11 +52,11 @@ async function onFileChange(event: Event) {
 </script>
 
 <template>
-  <div class="profile-page" v-if="authStore.user">
+  <div class="profile-page" v-if="userStore.user">
     <div class="profile-box">
       <div class="avatar-container">
         <div class="avatar-wrapper">
-          <img :src="authStore.user.profile?.profileImage || '/default-avatar.png'" class="avatar" />
+          <img :src="userStore.user.profile?.profileImage || '/default-avatar.png'" class="avatar" />
         </div>
         <input type="file" @change="onFileChange" accept="image/*" id="file-input" hidden />
         <label for="file-input" class="btn-outline">{{ t('actions.change_photo') }}</label>
