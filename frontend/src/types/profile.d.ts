@@ -6,3 +6,10 @@ export interface UserProfile {
   profileImage: string | null;
   bio: string;
 }
+
+export interface UserProfileForm {
+  username: string;
+  firstName: string;
+  lastName: string;
+  bio: string;
+}
