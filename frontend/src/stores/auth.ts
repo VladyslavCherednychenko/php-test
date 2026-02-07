@@ -2,26 +2,25 @@ import { defineStore } from 'pinia';
 import { ref, computed } from 'vue';
 import authService from '@/api/auth.service';
 import router from '@/router';
-import type { User } from '@/types/auth';
+import { useUserStore } from '@/stores/user';
+import type { AuthCredentials } from '@/types/auth';
 
 export const useAuthStore = defineStore('auth', () => {
-  const user = ref<User | null>(JSON.parse(localStorage.getItem('user') || 'null'));
   const token = ref<string>(localStorage.getItem('token') || '');
 
   const isAuthenticated = computed(() => !!token.value);
 
-  async function login(credentials) {
+  async function login(credentials: AuthCredentials) {
     try {
-      const response = await authService.login(credentials);
-      const { access_token, user: userData } = response.data.data;
+      const { data } = await authService.login(credentials);
+      const { access_token, user } = data.data;
 
       token.value = access_token;
-      user.value = userData;
-
       localStorage.setItem('token', access_token);
-      localStorage.setItem('user', JSON.stringify(userData));
 
-      localStorage.setItem('token', token.value);
+      const userStore = useUserStore();
+      userStore.setUser(user);
+
       router.push('/');
     } catch (error) {
       console.error('Login failed', error);
@@ -29,18 +28,17 @@ export const useAuthStore = defineStore('auth', () => {
     }
   }
 
-  async function register(credentials) {
+  async function register(credentials: AuthCredentials) {
     try {
-      const response = await authService.register(credentials);
-      const { access_token, user: userData } = response.data.data;
+      const { data } = await authService.register(credentials);
+      const { access_token, user } = data.data;
 
       token.value = access_token;
-      user.value = userData;
-
       localStorage.setItem('token', access_token);
-      localStorage.setItem('user', JSON.stringify(userData));
 
-      localStorage.setItem('token', token.value);
+      const userStore = useUserStore();
+      userStore.setUser(user);
+
       router.push('/');
     } catch (error) {
       console.error('Registration failed', error);
@@ -50,11 +48,13 @@ export const useAuthStore = defineStore('auth', () => {
 
   function logout() {
     token.value = '';
-    user.value = null;
     localStorage.removeItem('token');
-    localStorage.removeItem('user');
+
+    const userStore = useUserStore();
+    userStore.clearUser();
+
     router.push('/login');
   }
 
-  return { user, token, isAuthenticated, login, register, logout };
+  return { token, isAuthenticated, login, register, logout };
 });
