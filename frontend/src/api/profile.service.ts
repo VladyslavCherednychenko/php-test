@@ -1,13 +1,14 @@
 import apiClient from './axios';
+import type { UserProfileForm } from '@/types/profile';
 
 export default {
-  createOrUpdateProfile(userData) {
-    return apiClient.post('/profiles', userData);
+  createOrUpdateProfile(form: UserProfileForm) {
+    return apiClient.post('/profiles', form);
   },
-  changeProfilePicture(picture) {
+  changeProfilePicture(picture: FormData) {
     return apiClient.post('/profiles/picture', picture, {
       headers: {
-        'content-type': 'multipart/form-data', // do not forget this
+        'content-type': 'multipart/form-data',
       },
     });
   },
