@@ -66,11 +66,14 @@ watch(
   flex-wrap: wrap;
   gap: 1rem;
   padding: 2rem;
+  list-style: none;
 }
 
 .user-card-wrapper {
-  list-style: none;
   flex: 1 0 calc(33.333% - 1rem);
+  height: 120px;
+  display: flex;
+  align-items: center;
 }
 
 .user-card-wrapper:hover {
@@ -78,16 +81,26 @@ watch(
 }
 
 .user-card {
+  height: 100%;
+  width: 100%;
   display: flex;
   align-items: start;
   padding: 0.5rem 0.7rem;
   text-decoration: none;
 }
 
+.user-card > img {
+  height: 100%;
+  aspect-ratio: 1 / 1;
+}
+
 .user-fields {
+  height: 100%;
   display: flex;
   flex-direction: column;
   margin-left: 1rem;
+  justify-content: space-around;
+  width: 100%;
 }
 
 .search-results {
