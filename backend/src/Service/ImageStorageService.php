@@ -18,13 +18,13 @@ class ImageStorageService implements ImageStorageServiceInterface
         $dir = $this->getWebFileAbsolutePath($relativePath);
         $this->createDirectory($dir);
 
-        $target = "$dir/$hash.webp";
+        $target = "$dir/$hash.jpeg";
 
         if (!file_exists($target)) {
             $this->resizeImage($file->getPathname(), $target, $maxWidth, $maxHeight);
         }
 
-        return "/images/$relativePath/$hash.webp";
+        return "/images/$relativePath/$hash.jpeg";
     }
 
     private function getWebFileRelativePath(string $hash, ?string $folder): string
@@ -63,6 +63,6 @@ class ImageStorageService implements ImageStorageServiceInterface
             (int)($size->getHeight() * $ratio)
         );
 
-        $image->resize($new)->save($target, ['webp_quality' => 85]);
+        $image->resize($new)->save($target);
     }
 }

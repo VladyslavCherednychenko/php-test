@@ -25,22 +25,25 @@ class ProfileController extends AbstractController
     ) {}
 
     #[Route('/{id<\d+>}', name: 'find_by_id', methods: ['GET'])]
-    public function getProfileById(int $id): JsonResponse
+    public function getProfileById(int $id, Request $request): JsonResponse
     {
-        $profile = $this->profileService->getProfileById($id);
-        if (! $profile) {
+        $result = $this->profileService->getProfileById($id);
+        if (! $result) {
             return $this->responseFactory->error($this->translator->trans('api.profiles.find_by_id.not_found'), statusCode: 404);
         }
 
+        $this->attachHostToImage($request, $result);
+
         return $this->responseFactory->success(
             message: $this->translator->trans('api.profiles.find_by_id.found'),
-            data: ['profile' => $profile],
+            data: ['profile' => $result],
             groups: ['user:read']
         );
     }
 
     #[Route('/search', name: 'find_profiles_by_username', methods: ['GET'])]
     public function findProfilesByUsername(
+        Request $request,
         #[MapQueryParameter] string $username,
         #[MapQueryParameter(options: [1, 10])] int $limit = 10
     ): JsonResponse {
@@ -59,6 +62,10 @@ class ProfileController extends AbstractController
         }
 
         $profiles = $this->profileService->findProfilesByUsername($username, $limit);
+
+        foreach ($profiles as $result) {
+            $this->attachHostToImage($request, $result);
+        }
 
         return $this->responseFactory->success(
             message: $this->translator->trans('api.profiles.find_profiles_by_username.result.message'),
@@ -81,9 +88,11 @@ class ProfileController extends AbstractController
     }
 
     #[Route('/', name: 'update_profile', methods: ['PUT'])]
-    public function updateProfile(#[MapRequestPayload] ProfileDto $profile): JsonResponse
+    public function updateProfile(#[MapRequestPayload] ProfileDto $profile, Request $request): JsonResponse
     {
         $result = $this->profileService->createOrUpdateProfile($profile);
+
+        $this->attachHostToImage($request, $result);
 
         return $this->responseFactory->success(
             message: $this->translator->trans('api.profiles.update_profile.message'),
@@ -97,7 +106,6 @@ class ProfileController extends AbstractController
     {
         $file = $request->files->get('file');
         if (!$file) {
-
             return $this->responseFactory->error(
                 $this->translator->trans('api.profiles.picture.no_file.message'),
                 errors: ['error' => $this->translator->trans('api.profiles.picture.no_file')],
@@ -106,11 +114,35 @@ class ProfileController extends AbstractController
         }
 
         $path = $this->imageStorageService->saveImage($file);
+        $result = $this->profileService->updateProfilePicture($path);
+
+        $this->attachHostToImage($request, $result);
 
         return $this->responseFactory->success(
             message: $this->translator->trans('api.profiles.upload_profile_picture.message'),
-            data: ['path' => $path],
+            data: ['profile' => $result],
+            groups: ['user:read'],
             statusCode: 201
         );
+    }
+
+    #[Route('/picture', name: 'delete_profile_picture', methods: ['DELETE'])]
+    public function deleteProfilePicture(Request $request): JsonResponse
+    {
+        $result = $this->profileService->deleteProfilePicture();
+
+        return $this->responseFactory->success(
+            message: $this->translator->trans('api.profiles.delete_profile_picture.message'),
+            data: ['profile' => $result],
+            groups: ['user:read'],
+            statusCode: 200
+        );
+    }
+
+    private function attachHostToImage(Request $request, $profile)
+    {
+        if ($profile->getProfileImage()) {
+            $profile->setProfileImage($request->getSchemeAndHttpHost() . $profile->getProfileImage());
+        }
     }
 }

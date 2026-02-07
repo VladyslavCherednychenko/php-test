@@ -13,6 +13,7 @@ class UserProfileService implements UserProfileServiceInterface
     public function __construct(
         private UserProfileRepository $userProfileRepository,
         private UserService $userService,
+        private ImageStorageServiceInterface $imageStorageService,
         private TranslatorInterface $translator
     ) {}
 
@@ -46,6 +47,38 @@ class UserProfileService implements UserProfileServiceInterface
         $profile->setLastName($userProfile->lastName);
         $profile->setBio($userProfile->bio);
 
+        return $this->userProfileRepository->createOrUpdateProfile($profile);
+    }
+
+    public function updateProfilePicture(string $path): UserProfile
+    {
+        $user = $this->userService->getCurrentUser();
+        $userEmail = $user->getUserIdentifier();
+        $dbUser = $this->userService->getUserByEmail($userEmail);
+
+        if ($dbUser == null) {
+            throw new AccessDeniedHttpException($this->translator->trans('service.profile.create_or_update.access_denied'));
+        }
+
+        $profile = $dbUser->getProfile() ?? new UserProfile();
+        $profile->setUser($dbUser);
+        $profile->setProfileImage($path);
+        return $this->userProfileRepository->createOrUpdateProfile($profile);
+    }
+
+    public function deleteProfilePicture(): UserProfile
+    {
+        $user = $this->userService->getCurrentUser();
+        $userEmail = $user->getUserIdentifier();
+        $dbUser = $this->userService->getUserByEmail($userEmail);
+
+        if ($dbUser == null) {
+            throw new AccessDeniedHttpException($this->translator->trans('service.profile.create_or_update.access_denied'));
+        }
+
+        $profile = $dbUser->getProfile() ?? new UserProfile();
+        $profile->setUser($dbUser);
+        $profile->setProfileImage(null);
         return $this->userProfileRepository->createOrUpdateProfile($profile);
     }
 }

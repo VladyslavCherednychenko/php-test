@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Service;
 
 use App\Dto\ProfileDto;
@@ -11,4 +12,8 @@ interface UserProfileServiceInterface
     public function findProfilesByUsername(string $username, int $limit = 5);
 
     public function createOrUpdateProfile(ProfileDto $userProfile): UserProfile;
+
+    public function updateProfilePicture(string $path): UserProfile;
+
+    public function deleteProfilePicture(): UserProfile;
 }
