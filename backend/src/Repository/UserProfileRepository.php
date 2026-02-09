@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Repository;
 
 use App\Entity\UserProfile;
@@ -20,7 +21,7 @@ class UserProfileRepository extends ServiceEntityRepository implements UserProfi
 
     public function getUserProfile(int $user_id): ?UserProfile
     {
-        return $this->findOneBy(['user_id' => $user_id]);
+        return $this->findOneBy(['user' => $user_id]);
     }
 
     public function findProfilesByUsername(string $username, int $limit = 5)

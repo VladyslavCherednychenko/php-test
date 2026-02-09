@@ -25,6 +25,28 @@ class UserProfileService implements UserProfileServiceInterface
         return $this->userProfileRepository->getProfileById($profile_id);
     }
 
+    public function getUserProfile(int $user_id): ?UserProfile
+    {
+        $dbUser = $this->userService->getUserById($user_id);
+
+        if (!$dbUser) {
+            return null;
+        }
+
+        $result = $this->userProfileRepository->getUserProfile($user_id);
+
+        // lazy creation of profile on first access via userId (if not exists)
+        if ($result == null) {
+            $profile = new UserProfile();
+            $profile->setUser($dbUser);
+            $profile->setUsername('user_' . bin2hex(random_bytes(6)));
+            $profile->setProfileImage(ImagesConstants::PFP_DEFAULT_PATH);
+            $result =  $this->userProfileRepository->createOrUpdateProfile($profile);
+        }
+
+        return $result;
+    }
+
     public function findProfilesByUsername(string $username, int $limit = 5)
     {
         return $this->userProfileRepository->findProfilesByUsername($username, $limit);

@@ -9,6 +9,8 @@ interface UserProfileServiceInterface
 {
     public function getProfileById(int $profile_id): ?UserProfile;
 
+    public function getUserProfile(int $user_id): ?UserProfile;
+
     public function findProfilesByUsername(string $username, int $limit = 5);
 
     public function createOrUpdateProfile(ProfileDto $userProfile): UserProfile;
