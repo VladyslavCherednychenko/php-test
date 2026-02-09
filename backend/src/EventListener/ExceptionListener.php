@@ -28,6 +28,11 @@ class ExceptionListener
         $message = $this->translator->trans('exception_listener.message.generic');
         $errors = ['error' => $exception->getMessage()];
 
+        if (!($exception instanceof \Exception)) {
+            $event->setResponse($this->responseFactory->error($message,  $errors, $statusCode));
+            return;
+        }
+
         if ($this->isValidationFailedException($exception)) {
 
             $validationException = $exception->getPrevious();
