@@ -2,11 +2,11 @@ import { defineStore } from 'pinia';
 import { ref, computed } from 'vue';
 import authService from '@/api/auth.service';
 import router from '@/router';
-import { useUserStore } from '@/stores/user';
 import type { AuthCredentials } from '@/types/auth';
 
 export const useAuthStore = defineStore('auth', () => {
   const token = ref<string>(localStorage.getItem('token') || '');
+  const userId = ref<number | null>(Number.parseInt(localStorage.getItem('userId') || '') || null);
 
   const isAuthenticated = computed(() => !!token.value);
 
@@ -18,8 +18,7 @@ export const useAuthStore = defineStore('auth', () => {
       token.value = access_token;
       localStorage.setItem('token', access_token);
 
-      const userStore = useUserStore();
-      userStore.setUser(user);
+      userId.value = user.id;
 
       router.push('/');
     } catch (error) {
@@ -36,8 +35,7 @@ export const useAuthStore = defineStore('auth', () => {
       token.value = access_token;
       localStorage.setItem('token', access_token);
 
-      const userStore = useUserStore();
-      userStore.setUser(user);
+      userId.value = user.id;
 
       router.push('/');
     } catch (error) {
@@ -46,15 +44,17 @@ export const useAuthStore = defineStore('auth', () => {
     }
   }
 
-  function logout() {
-    token.value = '';
-    localStorage.removeItem('token');
+  async function logout() {
+    await authService.terminateCurrentSession();
 
-    const userStore = useUserStore();
-    userStore.clearUser();
+    token.value = '';
+    userId.value = null;
+
+    localStorage.removeItem('token');
+    localStorage.removeItem('userId');
 
     router.push('/login');
   }
 
-  return { token, isAuthenticated, login, register, logout };
+  return { token, userId, isAuthenticated, login, register, logout };
 });
