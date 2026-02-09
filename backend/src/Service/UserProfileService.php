@@ -5,6 +5,7 @@ namespace App\Service;
 use App\Dto\ProfileDto;
 use App\Entity\UserProfile;
 use App\Repository\UserProfileRepository;
+use App\Constants\ImagesConstants;
 use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
@@ -13,7 +14,6 @@ class UserProfileService implements UserProfileServiceInterface
     public function __construct(
         private UserProfileRepository $userProfileRepository,
         private UserService $userService,
-        private ImageStorageServiceInterface $imageStorageService,
         private TranslatorInterface $translator
     ) {}
 
@@ -47,6 +47,10 @@ class UserProfileService implements UserProfileServiceInterface
         $profile->setLastName($userProfile->lastName);
         $profile->setBio($userProfile->bio);
 
+        if ($profile->getProfileImage() == null) {
+            $profile->setProfileImage(ImagesConstants::PFP_DEFAULT_PATH);
+        }
+
         return $this->userProfileRepository->createOrUpdateProfile($profile);
     }
 
@@ -78,7 +82,7 @@ class UserProfileService implements UserProfileServiceInterface
 
         $profile = $dbUser->getProfile() ?? new UserProfile();
         $profile->setUser($dbUser);
-        $profile->setProfileImage(null);
+        $profile->setProfileImage(ImagesConstants::PFP_DEFAULT_PATH);
         return $this->userProfileRepository->createOrUpdateProfile($profile);
     }
 }

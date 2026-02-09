@@ -6,6 +6,7 @@ use App\Dto\ProfileDto;
 use App\Service\ApiResponseFactory;
 use App\Service\ImageStorageServiceInterface;
 use App\Service\UserProfileServiceInterface;
+use App\Helpers\ImageHelper;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -32,7 +33,7 @@ class ProfileController extends AbstractController
             return $this->responseFactory->error($this->translator->trans('api.profiles.find_by_id.not_found'), statusCode: 404);
         }
 
-        $this->attachHostToImage($request, $result);
+        ImageHelper::attachHostToImage($request, $result);
 
         return $this->responseFactory->success(
             message: $this->translator->trans('api.profiles.find_by_id.found'),
@@ -64,7 +65,7 @@ class ProfileController extends AbstractController
         $profiles = $this->profileService->findProfilesByUsername($username, $limit);
 
         foreach ($profiles as $result) {
-            $this->attachHostToImage($request, $result);
+            ImageHelper::attachHostToImage($request, $result);
         }
 
         return $this->responseFactory->success(
@@ -75,9 +76,10 @@ class ProfileController extends AbstractController
     }
 
     #[Route('', name: 'create_profile', methods: ['POST'])]
-    public function createProfile(#[MapRequestPayload] ProfileDto $profile): JsonResponse
+    public function createProfile(#[MapRequestPayload] ProfileDto $profile, Request $request): JsonResponse
     {
         $result = $this->profileService->createOrUpdateProfile($profile);
+        ImageHelper::attachHostToImage($request, $result);
 
         return $this->responseFactory->success(
             message: $this->translator->trans('api.profiles.create_profile.message'),
@@ -91,8 +93,7 @@ class ProfileController extends AbstractController
     public function updateProfile(#[MapRequestPayload] ProfileDto $profile, Request $request): JsonResponse
     {
         $result = $this->profileService->createOrUpdateProfile($profile);
-
-        $this->attachHostToImage($request, $result);
+        ImageHelper::attachHostToImage($request, $result);
 
         return $this->responseFactory->success(
             message: $this->translator->trans('api.profiles.update_profile.message'),
@@ -115,8 +116,7 @@ class ProfileController extends AbstractController
 
         $path = $this->imageStorageService->saveImage($file);
         $result = $this->profileService->updateProfilePicture($path);
-
-        $this->attachHostToImage($request, $result);
+        ImageHelper::attachHostToImage($request, $result);
 
         return $this->responseFactory->success(
             message: $this->translator->trans('api.profiles.upload_profile_picture.message'),
@@ -130,6 +130,7 @@ class ProfileController extends AbstractController
     public function deleteProfilePicture(Request $request): JsonResponse
     {
         $result = $this->profileService->deleteProfilePicture();
+        ImageHelper::attachHostToImage($request, $result);
 
         return $this->responseFactory->success(
             message: $this->translator->trans('api.profiles.delete_profile_picture.message'),
@@ -137,12 +138,5 @@ class ProfileController extends AbstractController
             groups: ['user:read'],
             statusCode: 200
         );
-    }
-
-    private function attachHostToImage(Request $request, $profile)
-    {
-        if ($profile->getProfileImage()) {
-            $profile->setProfileImage($request->getSchemeAndHttpHost() . $profile->getProfileImage());
-        }
     }
 }

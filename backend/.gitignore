@@ -16,3 +16,4 @@
 
 # images folder
 /public/images
+!/public/images/assets/default-avatar.svg

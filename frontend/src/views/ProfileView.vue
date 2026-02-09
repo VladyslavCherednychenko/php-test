@@ -67,7 +67,7 @@ async function deleteProfilePicture() {
     <div class="profile-box">
       <div class="avatar-container">
         <div class="avatar-wrapper">
-          <img :src="userStore.user.profile?.profileImage || '/default-avatar.png'" class="avatar" />
+          <img :src="userStore.user.profile?.profileImage" class="avatar" />
         </div>
         <div class="actions">
           <input type="file" @change="onFileChange" accept="image/*" id="file-input" hidden />
@@ -141,6 +141,7 @@ async function deleteProfilePicture() {
   height: 240px;
   border-radius: 50%;
   object-fit: cover;
+  outline: 1px solid var(--color-border-secondary);
 }
 .profile-form {
   display: flex;
