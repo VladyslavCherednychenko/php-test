@@ -43,6 +43,7 @@ class RefreshTokenRepository extends ServiceEntityRepository implements RefreshT
     public function deleteToken(RefreshToken $refreshToken): void
     {
         $this->entityManager->remove($refreshToken);
+        $this->entityManager->flush();
     }
 
     public function deleteAllTokensFromUser(User $user): void
