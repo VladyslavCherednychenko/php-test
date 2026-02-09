@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Helpers;
+namespace App\Helper;
 
 use App\Entity\UserProfile;
 use Symfony\Component\HttpFoundation\Request;
