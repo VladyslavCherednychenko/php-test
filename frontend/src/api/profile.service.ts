@@ -12,6 +12,9 @@ export default {
       },
     });
   },
+  deleteProfilePicture() {
+    return apiClient.delete('/profiles/picture');
+  },
   searchProfile(username: string) {
     return apiClient.get('/profiles/search', {
       params: {

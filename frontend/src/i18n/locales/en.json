@@ -15,7 +15,8 @@
     "edit_profile": "Edit profile",
     "save": "save",
     "cancel": "cancel",
-    "search_profiles": "Search profiles"
+    "search_profiles": "Search profiles",
+    "delete_profile_picture": "Delete profile picture"
   },
   "toggles": {
     "changeLanguage": "Change language",
@@ -62,5 +63,14 @@
   },
   "home": {
     "welcome": "Welcome Home"
+  },
+  "errors": {
+    "profile_image": {
+      "deletion_failed": "Deletion failed",
+      "upload_failed": "Upload failed"
+    },
+    "profile_info": {
+      "update_failed": "Update failed"
+    }
   }
 }

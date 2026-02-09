@@ -44,7 +44,18 @@ async function onFileChange(event: Event) {
     isLoading.value = true;
     await userStore.updateProfileImage(formData);
   } catch (err: any) {
-    error.value = t('errors.upload_failed');
+    error.value = err.response?.data?.errors || t('errors.profile_image.upload_failed');
+  } finally {
+    isLoading.value = false;
+  }
+}
+
+async function deleteProfilePicture() {
+  try {
+    isLoading.value = true;
+    await userStore.deleteProfileImage();
+  } catch (err: any) {
+    error.value = err.response?.data?.errors || t('errors.profile_image.deletion_failed');
   } finally {
     isLoading.value = false;
   }
@@ -58,8 +69,14 @@ async function onFileChange(event: Event) {
         <div class="avatar-wrapper">
           <img :src="userStore.user.profile?.profileImage || '/default-avatar.png'" class="avatar" />
         </div>
-        <input type="file" @change="onFileChange" accept="image/*" id="file-input" hidden />
-        <label for="file-input" class="btn-outline">{{ t('actions.change_photo') }}</label>
+        <div class="actions">
+          <input type="file" @change="onFileChange" accept="image/*" id="file-input" hidden />
+          <label for="file-input" class="btn-outline">{{ t('actions.change_photo') }}</label>
+          <!-- BUTTON TO DELETE PFP -->
+          <button class="btn-outline" type="button" @click="deleteProfilePicture">
+            {{ t('actions.delete_profile_picture') }}
+          </button>
+        </div>
       </div>
       <p v-if="error" class="error">{{ error }}</p>
       <div v-if="isEditing" class="profile-info">

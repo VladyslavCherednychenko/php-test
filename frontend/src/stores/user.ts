@@ -25,6 +25,14 @@ export const useUserStore = defineStore('user', () => {
     }
   }
 
+  async function deleteProfileImage() {
+    const response = await profileService.deleteProfilePicture();
+    if (user.value) {
+      user.value.profile!.profileImage = response.data.data.profile.profileImage;
+      localStorage.setItem('user', JSON.stringify(user.value));
+    }
+  }
+
   async function updateProfileContent(form: UserProfileForm) {
     const response = await profileService.createOrUpdateProfile(form);
     if (user.value) {
@@ -37,5 +45,5 @@ export const useUserStore = defineStore('user', () => {
     }
   }
 
-  return { user, setUser, clearUser, updateProfileImage, updateProfileContent };
+  return { user, setUser, clearUser, updateProfileImage, deleteProfileImage, updateProfileContent };
 });

@@ -87,7 +87,7 @@ class ProfileController extends AbstractController
         );
     }
 
-    #[Route('/', name: 'update_profile', methods: ['PUT'])]
+    #[Route('', name: 'update_profile', methods: ['PUT'])]
     public function updateProfile(#[MapRequestPayload] ProfileDto $profile, Request $request): JsonResponse
     {
         $result = $this->profileService->createOrUpdateProfile($profile);
