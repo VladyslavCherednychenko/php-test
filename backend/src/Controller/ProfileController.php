@@ -6,7 +6,7 @@ use App\Dto\ProfileDto;
 use App\Service\ApiResponseFactory;
 use App\Service\ImageStorageServiceInterface;
 use App\Service\UserProfileServiceInterface;
-use App\Helpers\ImageHelper;
+use App\Helper\ImageHelper;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -25,7 +25,7 @@ class ProfileController extends AbstractController
         private TranslatorInterface $translator
     ) {}
 
-    #[Route('/{id<\d+>}', name: 'find_by_id', methods: ['GET'])]
+    #[Route('/{id<\d+>}', name: 'find_by_profile_id', methods: ['GET'])]
     public function getProfileById(int $id, Request $request): JsonResponse
     {
         $result = $this->profileService->getProfileById($id);
@@ -38,7 +38,24 @@ class ProfileController extends AbstractController
         return $this->responseFactory->success(
             message: $this->translator->trans('api.profiles.find_by_id.found'),
             data: ['profile' => $result],
-            groups: ['user:read']
+            groups: ['profile:read']
+        );
+    }
+
+    #[Route('/user/{id<\d+>}', name: 'find_by_user_id', methods: ['GET'])]
+    public function getUserProfile(int $id, Request $request): JsonResponse
+    {
+        $result = $this->profileService->getUserProfile($id);
+        if (! $result) {
+            return $this->responseFactory->error($this->translator->trans('api.profiles.find_by_id.not_found'), statusCode: 404);
+        }
+
+        ImageHelper::attachHostToImage($request, $result);
+
+        return $this->responseFactory->success(
+            message: $this->translator->trans('api.profiles.find_by_id.found'),
+            data: ['profile' => $result],
+            groups: ['profile:read']
         );
     }
 
@@ -71,7 +88,7 @@ class ProfileController extends AbstractController
         return $this->responseFactory->success(
             message: $this->translator->trans('api.profiles.find_profiles_by_username.result.message'),
             data: ['profiles' => $profiles],
-            groups: ['user:read']
+            groups: ['profile:read']
         );
     }
 
@@ -84,7 +101,7 @@ class ProfileController extends AbstractController
         return $this->responseFactory->success(
             message: $this->translator->trans('api.profiles.create_profile.message'),
             data: ['profile' => $result],
-            groups: ['user:read'],
+            groups: ['profile:read'],
             statusCode: 201
         );
     }
@@ -98,7 +115,7 @@ class ProfileController extends AbstractController
         return $this->responseFactory->success(
             message: $this->translator->trans('api.profiles.update_profile.message'),
             data: ['profile' => $result],
-            groups: ['user:read']
+            groups: ['profile:read']
         );
     }
 
@@ -121,7 +138,7 @@ class ProfileController extends AbstractController
         return $this->responseFactory->success(
             message: $this->translator->trans('api.profiles.upload_profile_picture.message'),
             data: ['profile' => $result],
-            groups: ['user:read'],
+            groups: ['profile:read'],
             statusCode: 201
         );
     }
@@ -135,7 +152,7 @@ class ProfileController extends AbstractController
         return $this->responseFactory->success(
             message: $this->translator->trans('api.profiles.delete_profile_picture.message'),
             data: ['profile' => $result],
-            groups: ['user:read'],
+            groups: ['profile:read'],
             statusCode: 200
         );
     }

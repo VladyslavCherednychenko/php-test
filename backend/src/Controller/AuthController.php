@@ -63,7 +63,7 @@ class AuthController extends AbstractController
             message: $this->translator->trans('api.auth.register.messages.created'),
             data: ['access_token' => $accessToken, 'user' => $createdUser],
             statusCode: 201,
-            groups: ['user:read']
+            groups: ['user:auth']
         );
 
         $this->refreshTokenCookieService->attachRefreshCookie($response, $refreshToken);
@@ -84,7 +84,7 @@ class AuthController extends AbstractController
             message: $this->translator->trans('api.auth.login.access_granted'),
             data: ['access_token' => $accessToken, 'user' => $user],
             statusCode: 200,
-            groups: ['user:read']
+            groups: ['user:auth']
         );
 
         $this->refreshTokenCookieService->attachRefreshCookie($response, $refreshToken);
@@ -135,7 +135,7 @@ class AuthController extends AbstractController
                 'access_token' => $newAccessToken,
                 'user' => $user,
             ],
-            groups: ['user:read']
+            groups: ['user:auth']
         );
 
         $this->refreshTokenCookieService->attachRefreshCookie($response, $newRefreshToken);

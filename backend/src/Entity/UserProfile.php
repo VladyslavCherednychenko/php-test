@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Entity;
 
 use App\Repository\UserProfileRepository;
@@ -15,7 +16,7 @@ class UserProfile
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column(name: 'user_profile_id', type: 'integer')]
-    #[Groups(['user:read'])]
+    #[Groups(['user:read', 'profile:read'])]
     private ?int $id = null;
 
     #[ORM\OneToOne(targetEntity: User::class, inversedBy: 'profile')]
@@ -24,23 +25,23 @@ class UserProfile
 
     #[ORM\Column(type: 'string', length: 50, unique: true, nullable: false)]
     #[Assert\NotBlank(message: 'validation.assert.not_blank')]
-    #[Groups(['user:read'])]
+    #[Groups(['user:read', 'profile:read'])]
     private string $username;
 
     #[ORM\Column(name: 'first_name', type: 'string', length: 50, nullable: true)]
-    #[Groups(['user:read'])]
+    #[Groups(['user:read', 'profile:read'])]
     private ?string $firstName = null;
 
     #[ORM\Column(name: 'last_name', type: 'string', length: 50, nullable: true)]
-    #[Groups(['user:read'])]
+    #[Groups(['user:read', 'profile:read'])]
     private ?string $lastName = null;
 
     #[ORM\Column(name: 'profile_image', type: 'string', length: 100, nullable: true)]
-    #[Groups(['user:read'])]
+    #[Groups(['user:read', 'profile:read'])]
     private ?string $profileImage = null;
 
     #[ORM\Column(type: 'string', length: 255, nullable: true)]
-    #[Groups(['user:read'])]
+    #[Groups(['user:read', 'profile:read'])]
     private ?string $bio = null;
 
     /* Getters and Setters */

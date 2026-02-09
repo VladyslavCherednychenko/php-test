@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Entity;
 
 use App\Enum\UserRole;
@@ -18,11 +19,11 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column(name: 'user_id', type: 'integer')]
-    #[Groups(['user:read'])]
+    #[Groups(['user:read', 'user:auth'])]
     private ?int $id = null;
 
     #[ORM\Column(type: 'string', length: 255, unique: true)]
-    #[Groups(['user:read'])]
+    #[Groups(['user:read', 'user:auth'])]
     #[Assert\NotBlank(message: 'validation.assert.not_blank')]
     #[Assert\Email(message: 'validation.assert.email')]
     #[Assert\Type('string', message: 'validation.assert.type_string')]
@@ -35,7 +36,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     private ?string $password = null;
 
     #[ORM\Column(enumType: UserRole::class, options: ['default' => 0])]
-    #[Groups(['user:read'])]
+    #[Groups(['user:read', 'user:auth'])]
     private UserRole $role = UserRole::USER;
 
     /* GETTERS & SETTERS */
@@ -86,8 +87,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     {
         return (string) $this->email;
     }
-    public function eraseCredentials(): void
-    {}
+    public function eraseCredentials(): void {}
 
     /* RELATIONS */
     #[ORM\OneToOne(mappedBy: 'user', targetEntity: UserProfile::class, cascade: ['persist', 'remove'])]
