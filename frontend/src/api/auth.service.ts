@@ -8,4 +8,10 @@ export default {
   register(credentials: AuthCredentials) {
     return apiClient.post('/auth/register', credentials);
   },
+  terminateCurrentSession() {
+    return apiClient.post('/auth/token/terminate/current');
+  },
+  terminateAllSessions() {
+    return apiClient.post('/auth/token/terminate/all');
+  },
 };

@@ -1,21 +1,55 @@
 <script setup lang="ts">
-import { ref, reactive } from 'vue';
+import { ref, reactive, onMounted } from 'vue';
 import { useI18n } from 'vue-i18n';
-import { useUserStore } from '@/stores/user';
+import { useAuthStore } from '@/stores/auth';
+import profileService from '@/api/profile.service';
 
 const { t } = useI18n();
-const userStore = useUserStore();
+const authStore = useAuthStore();
 
 const isEditing = ref(false);
 const isLoading = ref(false);
 const error = ref('');
 
+const profile = ref({
+  id: null,
+  username: '',
+  firstName: '',
+  lastName: '',
+  profileImage: '',
+  bio: '',
+});
+
+onMounted(async () => {
+  try {
+    isLoading.value = true;
+    const userId = authStore.userId;
+
+    // if store is corrupted - terminate session
+    if (!userId) {
+      authStore.logout();
+      return;
+    }
+
+    const response = await profileService.getProfileByUserId(userId);
+    profile.value = response.data.data.profile;
+    form.username = profile.value.username;
+    form.firstName = profile.value.firstName;
+    form.lastName = profile.value.lastName;
+    form.bio = profile.value.bio;
+  } catch (err: any) {
+    error.value = err.response?.data?.message || t('errors.profile.load_attempt_failed');
+  } finally {
+    isLoading.value = false;
+  }
+});
+
 // Reactive form state
 const form = reactive({
-  username: userStore.user?.profile?.username || '',
-  firstName: userStore.user?.profile?.firstName || '',
-  lastName: userStore.user?.profile?.lastName || '',
-  bio: userStore.user?.profile?.bio || '',
+  username: profile.value.username,
+  firstName: profile.value.firstName,
+  lastName: profile.value.lastName,
+  bio: profile.value.bio,
 });
 
 // --- Handle Text Data ---
@@ -23,10 +57,11 @@ async function handleUpdate() {
   isLoading.value = true;
   error.value = '';
   try {
-    await userStore.updateProfileContent(form);
+    const response = await profileService.createOrUpdateProfile(form);
+    profile.value = response.data.data.profile;
     isEditing.value = false;
   } catch (err: any) {
-    error.value = err.response?.data?.errors || 'Update failed';
+    error.value = err.response?.data?.errors || t('errors.profile_info.update_failed');
   } finally {
     isLoading.value = false;
   }
@@ -42,7 +77,8 @@ async function onFileChange(event: Event) {
 
   try {
     isLoading.value = true;
-    await userStore.updateProfileImage(formData);
+    const response = await profileService.changeProfilePicture(formData);
+    profile.value = response.data.data.profile;
   } catch (err: any) {
     error.value = err.response?.data?.errors || t('errors.profile_image.upload_failed');
   } finally {
@@ -53,7 +89,8 @@ async function onFileChange(event: Event) {
 async function deleteProfilePicture() {
   try {
     isLoading.value = true;
-    await userStore.deleteProfileImage();
+    const response = await profileService.deleteProfilePicture();
+    profile.value = response.data.data.profile;
   } catch (err: any) {
     error.value = err.response?.data?.errors || t('errors.profile_image.deletion_failed');
   } finally {
@@ -63,22 +100,21 @@ async function deleteProfilePicture() {
 </script>
 
 <template>
-  <div class="profile-page" v-if="userStore.user">
+  <div class="profile-page" v-if="authStore.userId">
+    <p v-if="error" class="error">{{ error }}</p>
     <div class="profile-box">
       <div class="avatar-container">
         <div class="avatar-wrapper">
-          <img :src="userStore.user.profile?.profileImage" class="avatar" />
+          <img :src="profile.profileImage" class="avatar" />
         </div>
         <div class="actions">
           <input type="file" @change="onFileChange" accept="image/*" id="file-input" hidden />
           <label for="file-input" class="btn-outline">{{ t('actions.change_photo') }}</label>
-          <!-- BUTTON TO DELETE PFP -->
           <button class="btn-outline" type="button" @click="deleteProfilePicture">
             {{ t('actions.delete_profile_picture') }}
           </button>
         </div>
       </div>
-      <p v-if="error" class="error">{{ error }}</p>
       <div v-if="isEditing" class="profile-info">
         <form @submit.prevent="handleUpdate" class="profile-info">
           <label>
@@ -87,11 +123,11 @@ async function deleteProfilePicture() {
           </label>
           <label>
             {{ t('profile.firstname') }}
-            <input v-model="form.firstName" :placeholder="t('profile.firstName')" />
+            <input v-model="form.firstName" :placeholder="t('profile.firstname')" />
           </label>
           <label>
             {{ t('profile.lastname') }}
-            <input v-model="form.lastName" :placeholder="t('profile.lastName')" />
+            <input v-model="form.lastName" :placeholder="t('profile.lastname')" />
           </label>
           <label>
             {{ t('profile.bio') }}
@@ -112,11 +148,11 @@ async function deleteProfilePicture() {
         </label>
         <label>
           {{ t('profile.firstname') }}
-          <input readonly v-model="form.firstName" :placeholder="t('profile.firstName')" />
+          <input readonly v-model="form.firstName" :placeholder="t('profile.firstname')" />
         </label>
         <label>
           {{ t('profile.lastname') }}
-          <input readonly v-model="form.lastName" :placeholder="t('profile.lastName')" />
+          <input readonly v-model="form.lastName" :placeholder="t('profile.lastname')" />
         </label>
         <label>
           {{ t('profile.bio') }}
@@ -161,6 +197,7 @@ async function deleteProfilePicture() {
   justify-content: center;
   padding-bottom: 5rem;
   gap: 2rem;
+  flex-direction: column;
 }
 
 .avatar-container,

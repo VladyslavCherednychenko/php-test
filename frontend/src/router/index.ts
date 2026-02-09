@@ -29,7 +29,7 @@ const router = createRouter({
       meta: { guestOnly: true },
     },
     {
-      path: '/profile',
+      path: '/profile/me',
       component: () => import('@/views/ProfileView.vue'),
       meta: { requiresAuth: true },
     },

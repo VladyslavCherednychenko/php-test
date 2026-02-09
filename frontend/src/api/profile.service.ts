@@ -25,4 +25,7 @@ export default {
   getProfileById(id: number | string) {
     return apiClient.get(`/profiles/${id}`);
   },
+  getProfileByUserId(id: number | string) {
+    return apiClient.get(`/profiles/user/${id}`);
+  },
 };

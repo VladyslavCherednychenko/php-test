@@ -40,12 +40,12 @@ watch(
       <p v-if="isLoading">{{ t('search.searching') }}</p>
 
       <ul v-else-if="results.length" class="results-box">
-        <li v-for="user in results" :key="user.id" class="user-card-wrapper">
-          <RouterLink class="user-card" :to="`/profiles/${user.id}`">
-            <img :src="user.profileImage" />
-            <div class="user-fields">
-              <strong>{{ user.username }}</strong>
-              <span>{{ user.firstName }} {{ user.lastName }}</span>
+        <li v-for="profile in results" :key="profile.id" class="profile-card-wrapper">
+          <RouterLink class="profile-card" :to="`/profiles/${profile.id}`">
+            <img :src="profile.profileImage" />
+            <div class="profile-fields">
+              <strong>{{ profile.username }}</strong>
+              <span>{{ profile.firstName }} {{ profile.lastName }}</span>
             </div>
           </RouterLink>
         </li>
@@ -69,18 +69,18 @@ watch(
   list-style: none;
 }
 
-.user-card-wrapper {
+.profile-card-wrapper {
   flex: 1 0 calc(33.333% - 1rem);
   height: 120px;
   display: flex;
   align-items: center;
 }
 
-.user-card-wrapper:hover {
+.profile-card-wrapper:hover {
   outline: 1px solid var(--color-text-primary);
 }
 
-.user-card {
+.profile-card {
   height: 100%;
   width: 100%;
   display: flex;
@@ -89,12 +89,12 @@ watch(
   text-decoration: none;
 }
 
-.user-card > img {
+.profile-card > img {
   height: 100%;
   aspect-ratio: 1 / 1;
 }
 
-.user-fields {
+.profile-fields {
   height: 100%;
   display: flex;
   flex-direction: column;

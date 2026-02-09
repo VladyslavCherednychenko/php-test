@@ -71,6 +71,9 @@
     },
     "profile_info": {
       "update_failed": "Update failed"
+    },
+    "profile": {
+      "load_attempt_failed": "Failed to load profile"
     }
   }
 }
