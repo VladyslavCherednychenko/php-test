@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, reactive, onMounted } from 'vue';
+import { ref, reactive, onMounted, watch } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 import { useI18n } from 'vue-i18n';
 import { useAuthStore } from '@/stores/auth';
@@ -33,7 +33,7 @@ const form = reactive({
   bio: profile.value.bio,
 });
 
-onMounted(async () => {
+async function fetchProfileData() {
   const username = route.params.username as string | undefined;
 
   try {
@@ -78,22 +78,18 @@ onMounted(async () => {
   } finally {
     loadingStore.hide();
   }
+}
+
+onMounted(async () => {
+  await fetchProfileData();
 });
 
-// --- Handle Text Data ---
-async function handleUpdate() {
-  loadingStore.show();
-  error.value = '';
-  try {
-    const response = await profileService.createOrUpdateProfile(form);
-    profile.value = response.data.data.profile;
-    isEditing.value = false;
-  } catch (err: any) {
-    error.value = err.response?.data?.errors || t('profile_page.errors.profile_info_update_failed');
-  } finally {
-    loadingStore.hide();
-  }
-}
+watch(
+  () => route.params.username,
+  async () => {
+    await fetchProfileData();
+  },
+);
 
 // --- Handle Profile Picture ---
 async function onFileChange(event: Event) {
