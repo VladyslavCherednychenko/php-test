@@ -1,15 +1,19 @@
 <script setup lang="ts">
 import { ref, reactive, onMounted } from 'vue';
+import { useRoute, useRouter } from 'vue-router';
 import { useI18n } from 'vue-i18n';
 import { useAuthStore } from '@/stores/auth';
 import profileService from '@/api/profile.service';
 
 const { t } = useI18n();
+const route = useRoute();
+const router = useRouter();
 const authStore = useAuthStore();
 
+const error = ref('');
 const isEditing = ref(false);
 const isLoading = ref(false);
-const error = ref('');
+const isOwnProfile = ref(false);
 
 const profile = ref({
   id: null,
@@ -18,38 +22,61 @@ const profile = ref({
   lastName: '',
   profileImage: '',
   bio: '',
+  userId: null,
 });
 
-onMounted(async () => {
-  try {
-    isLoading.value = true;
-    const userId = authStore.userId;
-
-    // if store is corrupted - terminate session
-    if (!userId) {
-      authStore.logout();
-      return;
-    }
-
-    const response = await profileService.getProfileByUserId(userId);
-    profile.value = response.data.data.profile;
-    form.username = profile.value.username;
-    form.firstName = profile.value.firstName;
-    form.lastName = profile.value.lastName;
-    form.bio = profile.value.bio;
-  } catch (err: any) {
-    error.value = err.response?.data?.message || t('errors.profile.load_attempt_failed');
-  } finally {
-    isLoading.value = false;
-  }
-});
-
-// Reactive form state
 const form = reactive({
   username: profile.value.username,
   firstName: profile.value.firstName,
   lastName: profile.value.lastName,
   bio: profile.value.bio,
+});
+
+onMounted(async () => {
+  const username = route.params.username as string | undefined;
+
+  try {
+    isLoading.value = true;
+    const authenticatedUserId = authStore.userId;
+
+    // if store is corrupted - terminate session
+    if (!authenticatedUserId) {
+      authStore.logout();
+      return;
+    }
+
+    if (!username) {
+      const response = await profileService.getProfileByUserId(authenticatedUserId);
+      profile.value = response.data.data.profile;
+
+      form.username = profile.value.username;
+      form.firstName = profile.value.firstName;
+      form.lastName = profile.value.lastName;
+      form.bio = profile.value.bio;
+
+      isOwnProfile.value = true;
+      router.replace(`/profile/${profile.value.username}`);
+    } else {
+      const response = await profileService.getProfileByUsername(username);
+
+      profile.value = response.data.data.profile;
+
+      form.username = profile.value.username;
+      form.firstName = profile.value.firstName;
+      form.lastName = profile.value.lastName;
+      form.bio = profile.value.bio;
+
+      if (profile.value.userId == authenticatedUserId) {
+        isOwnProfile.value = true;
+      } else {
+        isOwnProfile.value = false;
+      }
+    }
+  } catch (err: any) {
+    error.value = err.response?.data?.message || t('profile_page.errors.profile_not_loaded');
+  } finally {
+    isLoading.value = false;
+  }
 });
 
 // --- Handle Text Data ---
@@ -61,7 +88,7 @@ async function handleUpdate() {
     profile.value = response.data.data.profile;
     isEditing.value = false;
   } catch (err: any) {
-    error.value = err.response?.data?.errors || t('errors.profile_info.update_failed');
+    error.value = err.response?.data?.errors || t('profile_page.errors.profile_info_update_failed');
   } finally {
     isLoading.value = false;
   }
@@ -80,7 +107,7 @@ async function onFileChange(event: Event) {
     const response = await profileService.changeProfilePicture(formData);
     profile.value = response.data.data.profile;
   } catch (err: any) {
-    error.value = err.response?.data?.errors || t('errors.profile_image.upload_failed');
+    error.value = err.response?.data?.errors || t('profile_page.errors.profile_image_update_failed');
   } finally {
     isLoading.value = false;
   }
@@ -92,7 +119,7 @@ async function deleteProfilePicture() {
     const response = await profileService.deleteProfilePicture();
     profile.value = response.data.data.profile;
   } catch (err: any) {
-    error.value = err.response?.data?.errors || t('errors.profile_image.deletion_failed');
+    error.value = err.response?.data?.errors || t('profile_page.errors.profile_image_deletion_failed');
   } finally {
     isLoading.value = false;
   }
@@ -100,66 +127,96 @@ async function deleteProfilePicture() {
 </script>
 
 <template>
-  <div class="profile-page" v-if="authStore.userId">
+  <div class="profile-page" v-if="!isLoading || error">
     <p v-if="error" class="error">{{ error }}</p>
-    <div class="profile-box">
+
+    <div v-if="isLoading">Loading...</div>
+
+    <div v-else-if="profile" class="profile-box">
       <div class="avatar-container">
         <div class="avatar-wrapper">
-          <img :src="profile.profileImage" class="avatar" />
+          <img :src="profile.profileImage" class="avatar" alt="avatar" />
         </div>
-        <div class="actions">
+
+        <div v-if="isOwnProfile" class="actions">
           <input type="file" @change="onFileChange" accept="image/*" id="file-input" hidden />
-          <label for="file-input" class="btn-outline">{{ t('actions.change_photo') }}</label>
+          <label for="file-input" class="btn-outline">{{ t('profile_page.actions.change_profile_image') }}</label>
           <button class="btn-outline" type="button" @click="deleteProfilePicture">
-            {{ t('actions.delete_profile_picture') }}
+            {{ t('profile_page.actions.delete_profile_image') }}
           </button>
         </div>
       </div>
-      <div v-if="isEditing" class="profile-info">
+
+      <div v-if="isEditing && isOwnProfile" class="profile-info">
         <form @submit.prevent="handleUpdate" class="profile-info">
           <label>
-            {{ t('profile.username') }}
-            <input v-model="form.username" :placeholder="t('profile.username')" required />
+            {{ t('profile_page.profile_info_form.username') }}
+            <input v-model="form.username" :placeholder="t('profile_page.profile_info_form.username')" required />
           </label>
           <label>
-            {{ t('profile.firstname') }}
-            <input v-model="form.firstName" :placeholder="t('profile.firstname')" />
+            {{ t('profile_page.profile_info_form.firstname') }}
+            <input v-model="form.firstName" :placeholder="t('profile_page.profile_info_form.firstname')" />
           </label>
           <label>
-            {{ t('profile.lastname') }}
-            <input v-model="form.lastName" :placeholder="t('profile.lastname')" />
+            {{ t('profile_page.profile_info_form.lastname') }}
+            <input v-model="form.lastName" :placeholder="t('profile_page.profile_info_form.lastname')" />
           </label>
           <label>
-            {{ t('profile.bio') }}
-            <textarea v-model="form.bio" :placeholder="t('profile.bio')"></textarea>
+            {{ t('profile_page.profile_info_form.bio') }}
+            <textarea
+              v-model="form.bio"
+              :placeholder="t('profile_page.profile_info_form.bio')"
+              maxlength="255"
+            ></textarea>
           </label>
 
           <div class="actions">
-            <button class="btn-outline" type="submit" :disabled="isLoading">{{ t('actions.save') }}</button>
-            <button class="btn-outline" type="button" @click="isEditing = false">{{ t('actions.cancel') }}</button>
+            <button class="btn-outline" type="submit" :disabled="isLoading">
+              {{ t('common.actions.save') }}
+            </button>
+            <button class="btn-outline" type="button" @click="isEditing = false">
+              {{ t('common.actions.cancel') }}
+            </button>
           </div>
         </form>
       </div>
 
       <div v-else class="profile-info">
         <label>
-          {{ t('profile.username') }}
-          <input readonly v-model="form.username" :placeholder="t('profile.username')" required />
+          {{ t('profile_page.profile_info_form.username') }}
+          <input
+            readonly
+            v-model="form.username"
+            :placeholder="t('profile_page.profile_info_form.username')"
+            required
+          />
         </label>
         <label>
-          {{ t('profile.firstname') }}
-          <input readonly v-model="form.firstName" :placeholder="t('profile.firstname')" />
+          {{ t('profile_page.profile_info_form.firstname') }}
+          <input readonly v-model="form.firstName" :placeholder="t('profile_page.profile_info_form.firstname')" />
         </label>
         <label>
-          {{ t('profile.lastname') }}
-          <input readonly v-model="form.lastName" :placeholder="t('profile.lastname')" />
+          {{ t('profile_page.profile_info_form.lastname') }}
+          <input readonly v-model="form.lastName" :placeholder="t('profile_page.profile_info_form.lastname')" />
         </label>
         <label>
-          {{ t('profile.bio') }}
-          <textarea readonly v-model="form.bio" :placeholder="t('profile.bio')"></textarea>
+          {{ t('profile_page.profile_info_form.bio') }}
+          <textarea
+            readonly
+            v-model="form.bio"
+            :placeholder="t('profile_page.profile_info_form.bio')"
+            maxlength="255"
+          ></textarea>
         </label>
-        <button class="btn-outline" @click="isEditing = true">{{ t('actions.edit_profile') }}</button>
+
+        <button v-if="isOwnProfile" class="btn-outline" @click="isEditing = true">
+          {{ t('profile_page.actions.edit_profile') }}
+        </button>
       </div>
+    </div>
+
+    <div v-else-if="!profile && !error">
+      {{ t('profile_page.errors.profile_not_found') }}
     </div>
   </div>
 </template>
@@ -230,6 +287,10 @@ button {
   outline: 1px solid var(--color-text-secondary);
   color: var(--color-text-primary);
   padding: 0.3rem;
+}
+
+.profile-info > label > textarea {
+  resize: vertical;
 }
 
 .profile-info > label {

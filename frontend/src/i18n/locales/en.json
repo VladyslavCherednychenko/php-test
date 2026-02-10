@@ -11,12 +11,7 @@
     "login": "Log in",
     "register": "Register",
     "logout": "Log out",
-    "change_photo": "Change photo",
-    "edit_profile": "Edit profile",
-    "save": "save",
-    "cancel": "cancel",
-    "search_profiles": "Search profiles",
-    "delete_profile_picture": "Delete profile picture"
+    "search_profiles": "Search profiles"
   },
   "toggles": {
     "changeLanguage": "Change language",
@@ -50,11 +45,7 @@
   },
   "profile": {
     "welcome": "Welcome,",
-    "user": "User:",
-    "username": "Username:",
-    "firstname": "Firstname:",
-    "lastname": "Lastname:",
-    "bio": "Bio:"
+    "user": "User:"
   },
   "search": {
     "searching": "Searching...",
@@ -64,16 +55,30 @@
   "home": {
     "welcome": "Welcome Home"
   },
-  "errors": {
-    "profile_image": {
-      "deletion_failed": "Deletion failed",
-      "upload_failed": "Upload failed"
+  "common": {
+    "actions": {
+      "save": "save",
+      "cancel": "cancel"
+    }
+  },
+  "profile_page": {
+    "actions": {
+      "change_profile_image": "Change profile image",
+      "delete_profile_image": "Delete profile image",
+      "edit_profile": "Edit profile"
     },
-    "profile_info": {
-      "update_failed": "Update failed"
+    "profile_info_form": {
+      "username": "Username:",
+      "firstname": "Firstname:",
+      "lastname": "Lastname:",
+      "bio": "Bio:"
     },
-    "profile": {
-      "load_attempt_failed": "Failed to load profile"
+    "errors": {
+      "profile_image_deletion_failed": "Failed to delete profile image.",
+      "profile_image_update_failed": "Failed to update profile image.",
+      "profile_info_update_failed": "Failed to update profile info.",
+      "profile_not_loaded": "Failed to load profile.",
+      "profile_not_found": "Profile not found."
     }
   }
 }

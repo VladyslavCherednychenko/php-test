@@ -147,7 +147,7 @@ const handleSearch = () => {
               </RouterLink>
             </div>
             <div v-if="authStore.isAuthenticated" class="menu__tab">
-              <RouterLink to="/profile/me" class="menu__tab-button">
+              <RouterLink to="/profile/" class="menu__tab-button">
                 <span class="menu__tab-button-text">{{ t('links.profile') }}</span>
               </RouterLink>
             </div>

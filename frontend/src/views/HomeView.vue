@@ -41,7 +41,7 @@ watch(
 
       <ul v-else-if="results.length" class="results-box">
         <li v-for="profile in results" :key="profile.id" class="profile-card-wrapper">
-          <RouterLink class="profile-card" :to="`/profiles/${profile.id}`">
+          <RouterLink class="profile-card" :to="`/profile/${profile.username}`">
             <img :src="profile.profileImage" />
             <div class="profile-fields">
               <strong>{{ profile.username }}</strong>
