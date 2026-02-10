@@ -10,6 +10,7 @@ export interface AuthResponse {
 export interface AuthCredentials {
   email: string;
   password: string;
+  rememberMe: boolean;
 }
 
 export interface AuthState {

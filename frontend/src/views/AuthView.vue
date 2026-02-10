@@ -10,7 +10,7 @@ const router = useRouter();
 const route = useRoute();
 const authStore = useAuthStore();
 
-const form = ref<AuthCredentials>({ email: '', password: '' });
+const form = ref<AuthCredentials>({ email: '', password: '', rememberMe: false });
 const error = ref('');
 
 const isLoginPage = computed(() => route.path.endsWith('login'));
@@ -30,7 +30,11 @@ async function handleAuth() {
     }
     router.push('/');
   } catch (err: any) {
-    error.value = err.response?.data?.errors || t('auth.error');
+    if (isLoginPage.value) {
+      error.value = err.response?.data?.errors || t('auth_page.errors.login_failed');
+    } else {
+      error.value = err.response?.data?.errors || t('auth_page.errors.registration_failed');
+    }
   }
 }
 </script>
@@ -38,19 +42,23 @@ async function handleAuth() {
 <template>
   <div class="auth-form">
     <form @submit.prevent="handleAuth">
-      <h2>{{ isLoginPage ? t('actions.login') : t('actions.register') }}</h2>
+      <h2>{{ isLoginPage ? t('auth_page.actions.login') : t('auth_page.actions.register') }}</h2>
 
       <p v-if="error" class="error">{{ error }}</p>
 
-      <input v-model="form.email" type="email" :placeholder="t('auth.email')" required />
-      <input v-model="form.password" type="password" :placeholder="t('auth.password')" required />
+      <input v-model="form.email" type="email" :placeholder="t('auth_page.form.email')" required />
+      <input v-model="form.password" type="password" :placeholder="t('auth_page.form.password')" required />
+      <label class="remember-me">
+        <input v-model="form.rememberMe" type="checkbox" />
+        <span>{{ t('auth_page.form.rememberMe') }}</span>
+      </label>
 
       <button type="submit" class="btn-outline">
-        {{ isLoginPage ? t('actions.login') : t('actions.register') }}
+        {{ isLoginPage ? t('auth_page.actions.login') : t('auth_page.actions.register') }}
       </button>
 
       <p class="auth-form__footer" @click="toggleAuthMode" style="cursor: pointer">
-        {{ isLoginPage ? t('auth.no_account') : t('auth.already_have_an_account') }}
+        {{ isLoginPage ? t('auth_page.toggle.no_account') : t('auth_page.toggle.already_have_an_account') }}
       </p>
     </form>
   </div>
@@ -90,5 +98,9 @@ async function handleAuth() {
 .error {
   color: var(--color-text-danger);
   margin-bottom: 1rem;
+}
+
+.remember-me span {
+  margin-left: 1rem;
 }
 </style>

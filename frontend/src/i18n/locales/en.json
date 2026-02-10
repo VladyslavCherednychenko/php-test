@@ -7,8 +7,6 @@
   },
   "actions": {
     "healthCheck": "Check connection with API",
-    "login": "Log in",
-    "register": "Register",
     "logout": "Log out",
     "search_profiles": "Search profiles"
   },
@@ -34,14 +32,6 @@
     "phpVersion": "PHP version",
     "dbStatus": "DB available"
   },
-  "auth": {
-    "email": "Email",
-    "password": "Password",
-    "login_failed": "Login failed",
-    "registration_failed": "Registration failed",
-    "no_account": "No account?",
-    "already_have_an_account": "Already have an account?"
-  },
   "profile": {
     "welcome": "Welcome,",
     "user": "User:"
@@ -61,6 +51,25 @@
     "actions": {
       "save": "save",
       "cancel": "cancel"
+    }
+  },
+  "auth_page": {
+    "form": {
+      "email": "Email",
+      "password": "Password",
+      "rememberMe": "Remember me"
+    },
+    "toggle": {
+      "no_account": "No account?",
+      "already_have_an_account": "Already have an account?"
+    },
+    "actions": {
+      "login": "Log in",
+      "register": "Register"
+    },
+    "errors": {
+      "login_failed": "Login failed",
+      "registration_failed": "Registration failed"
     }
   },
   "profile_page": {
