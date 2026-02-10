@@ -10,6 +10,19 @@ export const useAuthStore = defineStore('auth', () => {
 
   const isAuthenticated = computed(() => !!token.value);
 
+  async function init() {
+    try {
+      const { data } = await authService.getAuthenticatedUserCredentials();
+      const { user } = data.data;
+
+      userId.value = user.id;
+      localStorage.setItem('userId', user.id);
+    } catch (error) {
+      console.error('Login failed', error);
+      throw error;
+    }
+  }
+
   async function login(credentials: AuthCredentials) {
     try {
       const { data } = await authService.login(credentials);
@@ -19,6 +32,7 @@ export const useAuthStore = defineStore('auth', () => {
       localStorage.setItem('token', access_token);
 
       userId.value = user.id;
+      localStorage.setItem('userId', user.id);
 
       router.push('/');
     } catch (error) {
@@ -36,6 +50,7 @@ export const useAuthStore = defineStore('auth', () => {
       localStorage.setItem('token', access_token);
 
       userId.value = user.id;
+      localStorage.setItem('userId', user.id);
 
       router.push('/');
     } catch (error) {
@@ -48,13 +63,13 @@ export const useAuthStore = defineStore('auth', () => {
     await authService.terminateCurrentSession();
 
     token.value = '';
-    userId.value = null;
-
     localStorage.removeItem('token');
+
+    userId.value = null;
     localStorage.removeItem('userId');
 
     router.push('/login');
   }
 
-  return { token, userId, isAuthenticated, login, register, logout };
+  return { token, userId, isAuthenticated, init, login, register, logout };
 });

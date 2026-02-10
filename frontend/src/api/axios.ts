@@ -42,9 +42,10 @@ apiClient.interceptors.response.use(
         const { access_token, user } = response.data.data;
 
         authStore.token = access_token;
-        authStore.user = user;
         localStorage.setItem('token', access_token);
-        localStorage.setItem('user', JSON.stringify(user));
+
+        authStore.userId = user.id;
+        localStorage.setItem('userId', user.id);
 
         originalRequest.headers.Authorization = `Bearer ${access_token}`;
         return apiClient(originalRequest);
