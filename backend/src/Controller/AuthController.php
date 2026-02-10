@@ -92,6 +92,19 @@ class AuthController extends AbstractController
         return $response;
     }
 
+    #[Route('/me', name: 'get_authenticated_user_credentials', methods: ['GET'])]
+    public function getAuthenticatedUserCredentials(): JsonResponse
+    {
+        $user = $this->userService->getCurrentUser();
+
+        return $this->responseFactory->success(
+            message: $this->translator->trans('api.auth.get_authenticated_user_credentials.message'),
+            data: ['user' => $user],
+            statusCode: 200,
+            groups: ['user:auth']
+        );
+    }
+
     // Terminates current session of the user
     #[Route('/token/terminate/current', name: 'terminate_current_session', methods: ['POST'])]
     public function terminate(Request $request): JsonResponse

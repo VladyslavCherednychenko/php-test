@@ -35,6 +35,8 @@ api.auth:
         missing: "Refresh token is missing."
         expired: "Invalid or expired refresh token."
         success: "Tokens have been updated."
+    get_authenticated_user_credentials:
+        message: "Current user."
 api.profiles:
     find_by_id:
         not_found: "Profile not found."
