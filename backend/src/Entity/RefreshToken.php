@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Entity;
 
 use App\Repository\RefreshTokenRepository;
@@ -25,6 +26,9 @@ class RefreshToken
     #[ORM\ManyToOne(targetEntity: User::class)]
     #[ORM\JoinColumn(name: 'user_id', referencedColumnName: 'user_id', nullable: false, onDelete: 'CASCADE')]
     private User $user;
+
+    #[ORM\Column(name: 'remember_me', type: 'boolean')]
+    private bool $rememberMe;
 
     public function __construct()
     {
@@ -66,6 +70,17 @@ class RefreshToken
     public function setUser(User $user): self
     {
         $this->user = $user;
+        return $this;
+    }
+
+    public function isRememberMe(): bool
+    {
+        return $this->rememberMe;
+    }
+
+    public function setRememberMe(bool $rememberMe): self
+    {
+        $this->rememberMe = $rememberMe;
         return $this;
     }
 

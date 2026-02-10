@@ -13,14 +13,20 @@ class RefreshTokenService implements RefreshTokenServiceInterface
         private RefreshTokenRepositoryInterface $repository
     ) {}
 
-    public function createToken(User $user): RefreshToken
+    public function createToken(User $user, bool $rememberMe = false): RefreshToken
     {
         $token = new RefreshToken();
         $token->setUser($user);
 
         $token->setToken(bin2hex(random_bytes(32)));
+        $token->setRememberMe($rememberMe);
 
-        $expiresAt = new \DateTimeImmutable(sprintf('+%d seconds', RefreshTokenConstants::TOKEN_TTL));
+        if ($rememberMe) {
+            $expiresAt = new \DateTimeImmutable(sprintf('+%d seconds', RefreshTokenConstants::REMEMBER_ME_TTL));
+        } else {
+            $expiresAt = new \DateTimeImmutable(sprintf('+%d seconds', RefreshTokenConstants::SESSION_TTL));
+        }
+
         $token->setExpiresAt($expiresAt);
 
         $this->repository->save($token);
@@ -39,8 +45,10 @@ class RefreshTokenService implements RefreshTokenServiceInterface
     public function rotateToken(RefreshToken $refreshToken): RefreshToken
     {
         $user = $refreshToken->getUser();
+        $rememberMe = $refreshToken->isRememberMe();
+
         $this->repository->deleteToken($refreshToken);
-        return $this->createToken($user);
+        return $this->createToken($user, $rememberMe);
     }
 
     public function deleteToken(RefreshToken $refreshToken): void

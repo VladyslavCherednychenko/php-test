@@ -19,5 +19,8 @@ readonly class UserRegistrationDto
         #[Assert\PasswordStrength(message: 'validation.assert.password_strength')]
         #[Assert\Type('string', message: 'validation.assert.type_string')]
         public string $password,
+
+        #[Assert\Type('boolean', message: 'validation.assert.type_bool')]
+        public bool $rememberMe = false,
     ) {}
 }

@@ -7,7 +7,7 @@ use App\Entity\User;
 
 interface RefreshTokenServiceInterface
 {
-    public function createToken(User $user): RefreshToken;
+    public function createToken(User $user, bool $rememberMe = false): RefreshToken;
 
     public function findValidToken(string $token): ?RefreshToken;
 

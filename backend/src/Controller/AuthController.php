@@ -57,7 +57,7 @@ class AuthController extends AbstractController
 
         $createdUser = $this->userService->createUser($user);
         $accessToken = $this->jwtManager->create($createdUser);
-        $refreshToken = $this->refreshTokenService->createToken($createdUser);
+        $refreshToken = $this->refreshTokenService->createToken($createdUser, $dto->rememberMe);
 
         $response = $this->responseFactory->success(
             message: $this->translator->trans('api.auth.register.messages.created'),
@@ -78,7 +78,7 @@ class AuthController extends AbstractController
             ?? throw new BadCredentialsException($this->translator->trans('api.auth.login.incorrect_credentials'));
 
         $accessToken = $this->jwtManager->create($user);
-        $refreshToken = $this->refreshTokenService->createToken($user);
+        $refreshToken = $this->refreshTokenService->createToken($user, $dto->rememberMe);
 
         $response = $this->responseFactory->success(
             message: $this->translator->trans('api.auth.login.access_granted'),

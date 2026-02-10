@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Dto;
 
 use App\Entity\User;
@@ -17,5 +18,8 @@ readonly class AuthDto
         #[Assert\NotBlank(message: 'validation.assert.not_blank')]
         #[Assert\Type('string', message: 'validation.assert.type_string')]
         public string $password,
+
+        #[Assert\Type('boolean', message: 'validation.assert.type_bool')]
+        public bool $rememberMe = false,
     ) {}
 }
