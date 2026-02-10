@@ -13,7 +13,12 @@ const pinia = createPinia();
 app.use(pinia);
 
 const auth = useAuthStore(pinia);
-await auth.init();
+
+try {
+  await auth.init();
+} catch {
+  console.warn('User not authenticated on boot.');
+}
 
 app.use(router);
 app.use(i18n);

@@ -50,11 +50,10 @@ apiClient.interceptors.response.use(
         originalRequest.headers.Authorization = `Bearer ${access_token}`;
         return apiClient(originalRequest);
       } catch (refreshError) {
-        authStore.logout();
+        authStore.clearStorage();
         return Promise.reject(refreshError);
       }
     }
-
     return Promise.reject(error);
   },
 );

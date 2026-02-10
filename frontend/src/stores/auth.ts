@@ -11,6 +11,10 @@ export const useAuthStore = defineStore('auth', () => {
   const isAuthenticated = computed(() => !!token.value);
 
   async function init() {
+    if (!localStorage.getItem('token')) {
+      return;
+    }
+
     try {
       const { data } = await authService.getAuthenticatedUserCredentials();
       const { user } = data.data;
@@ -18,6 +22,7 @@ export const useAuthStore = defineStore('auth', () => {
       userId.value = user.id;
       localStorage.setItem('userId', user.id);
     } catch (error) {
+      logout();
       console.error('Login failed', error);
       throw error;
     }
@@ -61,15 +66,18 @@ export const useAuthStore = defineStore('auth', () => {
 
   async function logout() {
     await authService.terminateCurrentSession();
-
-    token.value = '';
-    localStorage.removeItem('token');
-
-    userId.value = null;
-    localStorage.removeItem('userId');
-
-    router.push('/login');
+    clearStorage();
   }
 
-  return { token, userId, isAuthenticated, init, login, register, logout };
+  async function clearStorage() {
+    token.value = '';
+    userId.value = null;
+
+    localStorage.removeItem('token');
+    localStorage.removeItem('userId');
+
+    await router.push('/login');
+  }
+
+  return { token, userId, isAuthenticated, init, login, register, logout, clearStorage };
 });
