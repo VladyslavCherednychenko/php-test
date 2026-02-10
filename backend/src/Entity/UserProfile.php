@@ -6,6 +6,7 @@ use App\Repository\UserProfileRepository;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Symfony\Component\Serializer\Attribute\Groups;
+use Symfony\Component\Serializer\Attribute\SerializedName;
 use Symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\Table(name: 'user_profile')]
@@ -64,6 +65,13 @@ class UserProfile
     {
         $this->user = $user;
         return $this;
+    }
+
+    #[SerializedName("userId")]
+    #[Groups(['profile:read'])]
+    public function getUserId(): int
+    {
+        return $this->user->getId();
     }
 
     public function getUsername(): ?string

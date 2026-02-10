@@ -6,7 +6,9 @@ use App\Entity\UserProfile;
 
 interface UserProfileRepositoryInterface
 {
-    public function getProfileById(int $profile_id);
+    public function getProfileById(int $profile_id): ?UserProfile;
+
+    public function getProfileByUsername(string $username): ?UserProfile;
 
     public function getUserProfile(int $user_id): ?UserProfile;
 

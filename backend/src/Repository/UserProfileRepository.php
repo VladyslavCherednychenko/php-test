@@ -14,9 +14,14 @@ class UserProfileRepository extends ServiceEntityRepository implements UserProfi
         parent::__construct($registry, UserProfile::class);
     }
 
-    public function getProfileById(int $profile_id)
+    public function getProfileById(int $profile_id): ?UserProfile
     {
         return $this->findOneBy(['id' => $profile_id]);
+    }
+
+    public function getProfileByUsername(string $username): ?UserProfile
+    {
+        return $this->findOneBy(['username' => $username]);
     }
 
     public function getUserProfile(int $user_id): ?UserProfile

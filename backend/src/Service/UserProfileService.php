@@ -25,6 +25,11 @@ class UserProfileService implements UserProfileServiceInterface
         return $this->userProfileRepository->getProfileById($profile_id);
     }
 
+    public function getProfileByUsername(string $username): ?UserProfile
+    {
+        return $this->userProfileRepository->getProfileByUsername($username);
+    }
+
     public function getUserProfile(int $user_id): ?UserProfile
     {
         $dbUser = $this->userService->getUserById($user_id);

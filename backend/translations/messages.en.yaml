@@ -38,7 +38,7 @@ api.auth:
     get_authenticated_user_credentials:
         message: "Current user."
 api.profiles:
-    find_by_id:
+    common_responses:
         not_found: "Profile not found."
         found: "Profile found."
     find_profiles_by_username:

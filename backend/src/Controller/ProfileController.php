@@ -30,13 +30,30 @@ class ProfileController extends AbstractController
     {
         $result = $this->profileService->getProfileById($id);
         if (! $result) {
-            return $this->responseFactory->error($this->translator->trans('api.profiles.find_by_id.not_found'), statusCode: 404);
+            return $this->responseFactory->error($this->translator->trans('api.profiles.common_responses.not_found'), statusCode: 404);
         }
 
         ImageHelper::attachHostToImage($request, $result);
 
         return $this->responseFactory->success(
-            message: $this->translator->trans('api.profiles.find_by_id.found'),
+            message: $this->translator->trans('api.profiles.common_responses.found'),
+            data: ['profile' => $result],
+            groups: ['profile:read']
+        );
+    }
+
+    #[Route('/username/{username}', name: 'find_by_profile_username', methods: ['GET'])]
+    public function getProfileByUsername(string $username, Request $request): JsonResponse
+    {
+        $result = $this->profileService->getProfileByUsername($username);
+        if (! $result) {
+            return $this->responseFactory->error($this->translator->trans('api.profiles.common_responses.not_found'), statusCode: 404);
+        }
+
+        ImageHelper::attachHostToImage($request, $result);
+
+        return $this->responseFactory->success(
+            message: $this->translator->trans('api.profiles.common_responses.found'),
             data: ['profile' => $result],
             groups: ['profile:read']
         );
@@ -47,13 +64,13 @@ class ProfileController extends AbstractController
     {
         $result = $this->profileService->getUserProfile($id);
         if (! $result) {
-            return $this->responseFactory->error($this->translator->trans('api.profiles.find_by_id.not_found'), statusCode: 404);
+            return $this->responseFactory->error($this->translator->trans('api.profiles.common_responses.not_found'), statusCode: 404);
         }
 
         ImageHelper::attachHostToImage($request, $result);
 
         return $this->responseFactory->success(
-            message: $this->translator->trans('api.profiles.find_by_id.found'),
+            message: $this->translator->trans('api.profiles.common_responses.found'),
             data: ['profile' => $result],
             groups: ['profile:read']
         );
