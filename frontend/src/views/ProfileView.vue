@@ -4,6 +4,7 @@ import { useRoute, useRouter } from 'vue-router';
 import { useI18n } from 'vue-i18n';
 import { useAuthStore } from '@/stores/auth';
 import profileService from '@/api/profile.service';
+import { useLoadingStore } from '@/stores/loading';
 
 const { t } = useI18n();
 const route = useRoute();
@@ -12,7 +13,7 @@ const authStore = useAuthStore();
 
 const error = ref('');
 const isEditing = ref(false);
-const isLoading = ref(false);
+const loadingStore = useLoadingStore();
 const isOwnProfile = ref(false);
 
 const profile = ref({
@@ -36,7 +37,7 @@ onMounted(async () => {
   const username = route.params.username as string | undefined;
 
   try {
-    isLoading.value = true;
+    loadingStore.show();
     const authenticatedUserId = authStore.userId;
 
     // if store is corrupted - terminate session
@@ -75,13 +76,13 @@ onMounted(async () => {
   } catch (err: any) {
     error.value = err.response?.data?.message || t('profile_page.errors.profile_not_loaded');
   } finally {
-    isLoading.value = false;
+    loadingStore.hide();
   }
 });
 
 // --- Handle Text Data ---
 async function handleUpdate() {
-  isLoading.value = true;
+  loadingStore.show();
   error.value = '';
   try {
     const response = await profileService.createOrUpdateProfile(form);
@@ -90,7 +91,7 @@ async function handleUpdate() {
   } catch (err: any) {
     error.value = err.response?.data?.errors || t('profile_page.errors.profile_info_update_failed');
   } finally {
-    isLoading.value = false;
+    loadingStore.hide();
   }
 }
 
@@ -103,34 +104,32 @@ async function onFileChange(event: Event) {
   formData.append('file', target.files[0]);
 
   try {
-    isLoading.value = true;
+    loadingStore.show();
     const response = await profileService.changeProfilePicture(formData);
     profile.value = response.data.data.profile;
   } catch (err: any) {
     error.value = err.response?.data?.errors || t('profile_page.errors.profile_image_update_failed');
   } finally {
-    isLoading.value = false;
+    loadingStore.hide();
   }
 }
 
 async function deleteProfilePicture() {
   try {
-    isLoading.value = true;
+    loadingStore.show();
     const response = await profileService.deleteProfilePicture();
     profile.value = response.data.data.profile;
   } catch (err: any) {
     error.value = err.response?.data?.errors || t('profile_page.errors.profile_image_deletion_failed');
   } finally {
-    isLoading.value = false;
+    loadingStore.hide();
   }
 }
 </script>
 
 <template>
-  <div class="profile-page" v-if="!isLoading || error">
+  <div class="profile-page" v-if="!loadingStore.isLoading || error">
     <p v-if="error" class="error">{{ error }}</p>
-
-    <div v-if="isLoading">Loading...</div>
 
     <div v-else-if="profile" class="profile-box">
       <div class="avatar-container">
@@ -171,7 +170,7 @@ async function deleteProfilePicture() {
           </label>
 
           <div class="actions">
-            <button class="btn-outline" type="submit" :disabled="isLoading">
+            <button class="btn-outline" type="submit" :disabled="loadingStore.isLoading">
               {{ t('common.actions.save') }}
             </button>
             <button class="btn-outline" type="button" @click="isEditing = false">

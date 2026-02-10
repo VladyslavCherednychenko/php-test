@@ -12,6 +12,7 @@ import LanguagesIcon from './icons/IconLanguages.vue';
 import VueLogoIcon from './icons/IconVueLogo.vue';
 import SymfonyLogoIcon from './icons/IconSymfonyLogo.vue';
 import LoginIcon from './icons/IconLogin.vue';
+import { useLoadingStore } from '@/stores/loading';
 
 const { t, locale, availableLocales } = useI18n();
 const authStore = useAuthStore();
@@ -80,10 +81,10 @@ const selectLanguage = (lang: string) => {
 // --- API LOGIC ---
 const backendData = ref(null);
 const error = ref(null);
-const isLoading = ref(false);
+const loadingStore = useLoadingStore();
 
 async function fetchData() {
-  isLoading.value = true;
+  loadingStore.show();
   error.value = null;
 
   try {
@@ -94,7 +95,7 @@ async function fetchData() {
   } catch (err) {
     error.value = err instanceof Error ? err.message : 'Error';
   } finally {
-    isLoading.value = false;
+    loadingStore.hide();
   }
 }
 
@@ -187,8 +188,8 @@ const handleSearch = () => {
     <div class="utilities-bar">
       <ol class="utilities__external">
         <li>
-          <button @click="fetchData" :disabled="isLoading" class="utilities__button">
-            {{ isLoading ? t('awaitingResults') : t('actions.healthCheck') }}
+          <button @click="fetchData" :disabled="loadingStore.isLoading" class="utilities__button">
+            {{ loadingStore.isLoading ? t('common.states.awaiting') : t('actions.healthCheck') }}
           </button>
           <HealthStatus :data="backendData" :error="error" @close="healthData" />
         </li>

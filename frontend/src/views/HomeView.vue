@@ -1,25 +1,26 @@
 <script setup lang="ts">
 import { ref, watch, onMounted } from 'vue';
 import { useRoute } from 'vue-router';
-import profileService from '@/api/profile.service';
 import { useI18n } from 'vue-i18n';
+import profileService from '@/api/profile.service';
+import { useLoadingStore } from '@/stores/loading';
 
 const { t } = useI18n();
 const route = useRoute();
 const results = ref([]);
-const isLoading = ref(false);
+const loadingStore = useLoadingStore();
 
 const performSearch = async (username: string) => {
   if (!username) return;
 
-  isLoading.value = true;
+  loadingStore.show();
   try {
     const response = await profileService.searchProfile(username);
     results.value = response.data.data.profiles;
   } catch (err) {
     console.error('Search failed', err);
   } finally {
-    isLoading.value = false;
+    loadingStore.hide();
   }
 };
 
@@ -37,9 +38,7 @@ watch(
     <div v-if="route.query.q" class="search-results">
       <h2>{{ t('search.results') }} "{{ route.query.q }}"</h2>
 
-      <p v-if="isLoading">{{ t('search.searching') }}</p>
-
-      <ul v-else-if="results.length" class="results-box">
+      <ul v-if="results.length" class="results-box">
         <li v-for="profile in results" :key="profile.id" class="profile-card-wrapper">
           <RouterLink class="profile-card" :to="`/profile/${profile.username}`">
             <img :src="profile.profileImage" />

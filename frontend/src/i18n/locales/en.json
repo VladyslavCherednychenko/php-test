@@ -1,7 +1,6 @@
 {
   "logoText": "Blog",
   "welcome": "Symfony + Vue Blog",
-  "awaitingResults": "Loading...",
   "links": {
     "home": "Home",
     "profile": "Profile"
@@ -48,7 +47,6 @@
     "user": "User:"
   },
   "search": {
-    "searching": "Searching...",
     "results": "Results for:",
     "not_found": "No users found."
   },
@@ -56,6 +54,10 @@
     "welcome": "Welcome Home"
   },
   "common": {
+    "states": {
+      "loading": "Loading...",
+      "awaiting": "Awaiting results..."
+    },
     "actions": {
       "save": "save",
       "cancel": "cancel"

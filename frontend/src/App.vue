@@ -1,12 +1,14 @@
 <script setup lang="ts">
 import { RouterView } from 'vue-router';
-import Navbar from './components/Navbar.vue';
+import NavBar from '@/components/NavBar.vue';
+import LoadingOverlay from '@/components/LoadingOverlay.vue';
 </script>
 
 <template>
-  <Navbar />
+  <NavBar />
 
   <div class="main-content">
+    <LoadingOverlay />
     <RouterView />
   </div>
 </template>

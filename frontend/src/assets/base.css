@@ -14,9 +14,11 @@
   /* colors */
   --color-white: #fff;
   --color-white-alpha-25: #ffffff40;
+  --color-white-alpha-50: #ffffff7f;
   --color-white-alpha-75: #ffffffbf;
   --color-black: #000;
   --color-black-alpha-25: #00000040;
+  --color-black-alpha-50: #0000007f;
   --color-black-alpha-75: #000000bf;
   --color-gray-90: #f7f7f8;
   --color-gray-80: #edeef0;
@@ -80,6 +82,10 @@
   --color-background-primary: var(--color-gray-90);
   --color-background-secondary: var(--color-gray-90);
 
+  --color-background-alpha-25: var(--color-white-alpha-25);
+  --color-background-alpha-50: var(--color-white-alpha-50);
+  --color-background-alpha-75: var(--color-white-alpha-75);
+
   --color-border-primary: var(--color-gray-60);
   --color-border-secondary: var(--color-gray-40);
   --color-border-active: var(--color-blue-50);
@@ -93,6 +99,10 @@
   --color-background-page: var(--color-gray-05);
   --color-background-primary: var(--color-gray-10);
   --color-background-secondary: var(--color-gray-20);
+
+  --color-background-alpha-25: var(--color-black-alpha-25);
+  --color-background-alpha-50: var(--color-black-alpha-50);
+  --color-background-alpha-75: var(--color-black-alpha-75);
 
   --color-border-primary: var(--color-gray-40);
   --color-border-secondary: var(--color-gray-60);
